@@ -38,19 +38,17 @@ class Event extends Model
     /**
      * Get the session through the visit
      */
-    public function session(): BelongsTo
+    public function session()
     {
-        return $this->belongsTo(Session::class, 'session_id', 'id')
-            ->through('visit');
+        return $this->visit->session();
     }
 
     /**
      * Get the site through the visit and session
      */
-    public function site(): BelongsTo
+    public function site()
     {
-        return $this->belongsTo(Site::class, 'site_id', 'id')
-            ->through(['visit.session']);
+        return $this->visit->session->site();
     }
 
     /**

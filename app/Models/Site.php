@@ -54,7 +54,7 @@ class Site extends Model
      */
     public function visits()
     {
-        return $this->hasManyThrough(Visit::class, Session::class, 'site_id', 'session_id');
+        return $this->hasManyThrough(Visit::class, Session::class, 'site_id', 'session_id', 'id', 'id');
     }
 
     /**
@@ -62,8 +62,10 @@ class Site extends Model
      */
     public function events()
     {
-        return Event::whereHas('visit.session', function ($query) {
-            $query->where('site_id', $this->id);
+        return Event::whereHas('visit', function ($query) {
+            $query->whereHas('session', function ($subQuery) {
+                $subQuery->where('site_id', $this->id);
+            });
         });
     }
 
