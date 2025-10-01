@@ -72,4 +72,9 @@ class ApiGuard implements Guard
     {
         $this->user = $user;
     }
+
+    public function hasUser(): bool
+    {
+        return !is_null($this->user);
+    }
 }

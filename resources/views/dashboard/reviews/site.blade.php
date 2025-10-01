@@ -97,7 +97,7 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="flex-grow-1">
                                         <div class="d-flex align-items-center mb-1">
-                                            <strong>{{ $review['name'] ?? 'Anonymous' }}</strong>
+                                            <strong>{{ $review['visitor_name'] ?? 'Anonymous' }}</strong>
                                             <div class="ms-2">
                                                 @for($i = 1; $i <= 5; $i++)
                                                     <i class="fas fa-star {{ $i <= ($review['rating'] ?? 0) ? 'text-warning' : 'text-muted' }}"></i>
@@ -146,9 +146,9 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <strong>{{ $review['name'] ?? 'Anonymous' }}</strong>
+                                                <strong>{{ $review['visitor_name'] ?? 'Anonymous' }}</strong>
                                                 <br>
-                                                <small class="text-muted">{{ $review['email'] ?? 'No email' }}</small>
+                                                <small class="text-muted">{{ $review['visitor_email'] ?? 'No email' }}</small>
                                             </div>
                                         </td>
                                         <td>

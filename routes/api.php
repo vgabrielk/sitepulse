@@ -40,10 +40,16 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/auth/stats', [AuthController::class, 'getStats']);
     
     // Site routes
-    Route::apiResource('sites', SiteController::class);
-    Route::get('/sites/{id}/stats', [SiteController::class, 'getStats']);
-    Route::get('/sites/{id}/metrics', [SiteController::class, 'getMetrics']);
-    Route::get('/sites/{id}/widget-code', [SiteController::class, 'getWidgetCode']);
+    Route::apiResource('sites', SiteController::class)->names([
+        'index' => 'api.sites.index',
+        'store' => 'api.sites.store',
+        'show' => 'api.sites.show',
+        'update' => 'api.sites.update',
+        'destroy' => 'api.sites.destroy',
+    ]);
+    Route::get('/sites/{id}/stats', [SiteController::class, 'getStats'])->name('api.sites.stats');
+    Route::get('/sites/{id}/metrics', [SiteController::class, 'getMetrics'])->name('api.sites.metrics');
+    Route::get('/sites/{id}/widget-code', [SiteController::class, 'getWidgetCode'])->name('api.sites.widget-code');
     
     // Analytics routes
     Route::prefix('analytics')->group(function () {

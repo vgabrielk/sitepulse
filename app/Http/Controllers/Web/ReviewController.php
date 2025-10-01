@@ -26,8 +26,12 @@ class ReviewController extends Controller
 
         $reviews = collect();
         foreach ($client->sites as $site) {
-            $siteReviews = $this->reviewService->getRecentReviews($site, 50);
-            $reviews = $reviews->merge($siteReviews);
+            $siteReviews = $this->reviewService->getReviewsBySite($site, 50);
+            $reviews = $reviews->merge(collect($siteReviews)->map(function($review) use ($site) {
+                $reviewData = $review->toArray();
+                $reviewData['site_name'] = $site->name;
+                return $reviewData;
+            }));
         }
 
         $reviews = $reviews->sortByDesc('created_at')->take(100);
@@ -44,10 +48,16 @@ class ReviewController extends Controller
             abort(403, 'Unauthorized access to this site.');
         }
         
-        $reviews = $this->reviewService->getRecentReviews($site, 100);
+        $reviewsArray = $this->reviewService->getReviewsBySite($site, 100);
+        $reviews = collect($reviewsArray)->map(function($review) use ($site) {
+            $reviewData = $review->toArray();
+            $reviewData['site_name'] = $site->name;
+            return $reviewData;
+        });
 
         return view('dashboard.reviews.site', compact('site', 'reviews'));
     }
+
 
     public function approve(Review $review)
     {

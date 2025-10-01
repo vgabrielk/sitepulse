@@ -57,9 +57,9 @@ class Review extends Model
     /**
      * Approve the review
      */
-    public function approve(): void
+    public function approve(): bool
     {
-        $this->update([
+        return $this->update([
             'status' => self::STATUS_APPROVED,
             'approved_at' => now(),
         ]);
@@ -68,9 +68,9 @@ class Review extends Model
     /**
      * Reject the review
      */
-    public function reject(): void
+    public function reject(): bool
     {
-        $this->update(['status' => self::STATUS_REJECTED]);
+        return $this->update(['status' => self::STATUS_REJECTED]);
     }
 
     /**

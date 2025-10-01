@@ -17,14 +17,30 @@ class SiteController extends Controller
     public function index()
     {
         $user = Auth::user();
+        
+        \Log::info('SiteController@index - User: ' . $user->email);
+        \Log::info('SiteController@index - User ID: ' . $user->id);
+        
+        // Debug the relationship
         $client = $user->client;
+        \Log::info('SiteController@index - Client: ' . ($client ? $client->email : 'null'));
+        \Log::info('SiteController@index - Client ID: ' . ($client ? $client->id : 'null'));
         
         if (!$client) {
+            \Log::warning('SiteController@index - No client found for user: ' . $user->email);
+            \Log::warning('SiteController@index - User email: ' . $user->email);
+            
+            // Try to find client manually
+            $manualClient = \App\Models\Client::where('email', $user->email)->first();
+            \Log::info('SiteController@index - Manual client lookup: ' . ($manualClient ? $manualClient->email : 'null'));
+            
             return redirect()->route('login')->with('error', 'Client not found.');
         }
         
         // Get sites as models instead of DTOs
         $sites = $client->sites()->get();
+        
+        \Log::info('SiteController@index - Sites count: ' . $sites->count());
         
         return view('dashboard.sites.index', compact('sites'));
     }
@@ -86,8 +102,9 @@ class SiteController extends Controller
         
         $stats = $this->siteService->getSiteStats($site);
         $embedCode = $this->siteService->getWidgetEmbedCode($site);
+        $reviewEmbedCode = $this->siteService->getReviewEmbedCode($site);
         
-        return view('dashboard.sites.show', compact('site', 'stats', 'embedCode'));
+        return view('dashboard.sites.show', compact('site', 'stats', 'embedCode', 'reviewEmbedCode'));
     }
 
     public function edit(Site $site)

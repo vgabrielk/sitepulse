@@ -82,6 +82,22 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Review Embed Code -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Review Embed Code</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Add this code to your website to display customer reviews:</p>
+                <div class="input-group">
+                    <textarea class="form-control font-monospace" rows="4" readonly>{{ $reviewEmbedCode }}</textarea>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(this)">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Statistics -->

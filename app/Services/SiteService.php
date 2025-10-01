@@ -21,6 +21,12 @@ class SiteService
         $data['widget_config'] = $this->getDefaultWidgetConfig();
         $data['tracking_config'] = $this->getDefaultTrackingConfig();
         
+        // Ensure boolean fields have default values
+        $data['is_active'] = $data['is_active'] ?? true;
+        $data['anonymize_ips'] = $data['anonymize_ips'] ?? true;
+        $data['track_events'] = $data['track_events'] ?? true;
+        $data['collect_feedback'] = $data['collect_feedback'] ?? true;
+        
         $site = $this->siteRepository->create($data);
         
         return SiteDTO::fromModel($site);
@@ -109,8 +115,43 @@ class SiteService
         return $site->getWidgetEmbedCode();
     }
 
+    public function getReviewEmbedCode(Site $site): string
+    {
+        return $site->getReviewEmbedCode();
+    }
+
     public function validateDomain(string $domain): bool
     {
+        // Extract domain from URL if it's a full URL
+        $parsedUrl = parse_url($domain);
+        if ($parsedUrl && isset($parsedUrl['host'])) {
+            $domain = $parsedUrl['host'];
+            if (isset($parsedUrl['port'])) {
+                $domain .= ':' . $parsedUrl['port'];
+            }
+        }
+        
+        // Allow localhost with or without port
+        if (preg_match('/^localhost(:\d+)?$/', $domain)) {
+            return true;
+        }
+        
+        // Allow 127.0.0.1 with or without port
+        if (preg_match('/^127\.0\.0\.1(:\d+)?$/', $domain)) {
+            return true;
+        }
+        
+        // Allow 0.0.0.0 with or without port (for development)
+        if (preg_match('/^0\.0\.0\.0(:\d+)?$/', $domain)) {
+            return true;
+        }
+        
+        // Allow any IP address with port
+        if (preg_match('/^\d+\.\d+\.\d+\.\d+(:\d+)?$/', $domain)) {
+            return true;
+        }
+        
+        // Standard domain validation
         return filter_var($domain, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
     }
 

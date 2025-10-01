@@ -127,4 +127,39 @@ class Site extends Model
             $widgetUrl
         );
     }
+
+    /**
+     * Get review embed code
+     */
+    public function getReviewEmbedCode(): string
+    {
+        $reviewUrl = config('app.url') . '/widget/' . $this->widget_id . '/reviews';
+        $submitUrl = config('app.url') . '/widget/' . $this->widget_id . '/submit-review';
+        
+        return sprintf(
+            '<!-- SitePulse Reviews -->
+<div id="sitepulse-reviews" data-widget-id="%s" data-api-url="%s">
+    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 10px 0;">
+        <h3 style="margin: 0 0 10px 0; color: #333;">Customer Reviews</h3>
+        <p style="margin: 0 0 15px 0; color: #666;">See what our customers are saying</p>
+        <a href="%s" target="_blank" style="display: inline-block; background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px;">View Reviews</a>
+        <a href="%s" target="_blank" style="display: inline-block; background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Submit Review</a>
+    </div>
+</div>
+<script>
+(function() {
+    var script = document.createElement("script");
+    script.src = "%s/widget.js";
+    script.async = true;
+    document.head.appendChild(script);
+})();
+</script>
+<!-- End SitePulse Reviews -->',
+            $this->widget_id,
+            config('app.url'),
+            $reviewUrl,
+            $submitUrl,
+            config('app.url')
+        );
+    }
 }

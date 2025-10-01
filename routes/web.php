@@ -120,3 +120,54 @@ Route::get('/widget/{widgetId}/reviews', function ($widgetId) {
     
     return view('widget.reviews', compact('site', 'reviews'));
 })->name('widget.reviews');
+
+// Public review submission
+Route::get('/widget/{widgetId}/submit-review', function ($widgetId) {
+    $site = \App\Models\Site::where('widget_id', $widgetId)->first();
+    
+    if (!$site || !$site->is_active) {
+        return response('Site not found or inactive', 404);
+    }
+    
+    return view('widget.submit-review', compact('site'));
+})->name('widget.submit-review');
+
+Route::post('/widget/{widgetId}/submit-review', function ($widgetId, \Illuminate\Http\Request $request) {
+    $site = \App\Models\Site::where('widget_id', $widgetId)->first();
+    
+    if (!$site || !$site->is_active) {
+        return response('Site not found or inactive', 404);
+    }
+
+    $request->validate([
+        'visitor_name' => 'required|string|max:255',
+        'visitor_email' => 'required|email|max:255',
+        'rating' => 'required|numeric|min:1|max:5',
+        'comment' => 'nullable|string|max:1000',
+    ]);
+
+    try {
+        $data = $request->only(['visitor_name', 'visitor_email', 'rating', 'comment']);
+        $data['ip_address'] = $request->ip();
+        $data['submitted_at'] = now();
+        $data['status'] = 'pending';
+        
+        $review = \App\Models\Review::create([
+            'site_id' => $site->id,
+            'visitor_name' => $data['visitor_name'],
+            'visitor_email' => $data['visitor_email'],
+            'rating' => $data['rating'],
+            'comment' => $data['comment'],
+            'ip_address' => $data['ip_address'],
+            'submitted_at' => $data['submitted_at'],
+            'status' => $data['status'],
+        ]);
+        
+        \Log::info('Review created successfully', ['review_id' => $review->id, 'site_id' => $site->id]);
+        
+        return redirect()->back()->with('success', 'Review submitted successfully! It will be reviewed before being published.');
+    } catch (\Exception $e) {
+        \Log::error('Failed to create review', ['error' => $e->getMessage(), 'site_id' => $site->id]);
+        return redirect()->back()->with('error', 'Failed to submit review: ' . $e->getMessage());
+    }
+})->name('widget.submit-review.post');
