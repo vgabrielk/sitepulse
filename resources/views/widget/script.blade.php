@@ -11,27 +11,70 @@
         isTracking: true,
         
         init: function() {
+            this.checkSessionExpiration();
             this.generateSessionToken();
             this.trackPageView();
             this.setupEventListeners();
             this.startEventBatching();
         },
         
+        checkSessionExpiration: function() {
+            var expires = localStorage.getItem('sitepulse_session_expires_' + this.siteId);
+            if (expires && Date.now() > parseInt(expires)) {
+                // Session expired, clear localStorage
+                localStorage.removeItem('sitepulse_session_' + this.siteId);
+                localStorage.removeItem('sitepulse_session_expires_' + this.siteId);
+                localStorage.removeItem('sitepulse_last_pageview_' + this.siteId);
+                console.log('SitePulse: Session expired, starting new session');
+            }
+        },
+        
         generateSessionToken: function() {
-            this.sessionToken = 'sp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            // Try to get existing session token from localStorage
+            var existingToken = localStorage.getItem('sitepulse_session_' + this.siteId);
+            if (existingToken) {
+                this.sessionToken = existingToken;
+            } else {
+                // Generate new session token
+                this.sessionToken = 'sp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                // Store in localStorage for 30 minutes
+                localStorage.setItem('sitepulse_session_' + this.siteId, this.sessionToken);
+                // Set expiration
+                localStorage.setItem('sitepulse_session_expires_' + this.siteId, Date.now() + (30 * 60 * 1000));
+            }
         },
         
         trackPageView: function() {
+            // Check if we already tracked this pageview recently
+            var lastPageview = localStorage.getItem('sitepulse_last_pageview_' + this.siteId);
+            var currentUrl = window.location.href;
+            var now = Date.now();
+            
+            // If we have a recent pageview for the same URL (within 5 minutes), skip
+            if (lastPageview) {
+                var lastData = JSON.parse(lastPageview);
+                if (lastData.url === currentUrl && (now - lastData.timestamp) < (5 * 60 * 1000)) {
+                    console.log('SitePulse: Skipping duplicate pageview for', currentUrl);
+                    return;
+                }
+            }
+            
             var event = {
                 type: 'pageview',
                 data: {
-                    url: window.location.href,
+                    url: currentUrl,
                     title: document.title,
                     referrer: document.referrer,
-                    timestamp: Date.now()
+                    timestamp: now
                 },
-                timestamp: Date.now()
+                timestamp: now
             };
+            
+            // Store this pageview info
+            localStorage.setItem('sitepulse_last_pageview_' + this.siteId, JSON.stringify({
+                url: currentUrl,
+                timestamp: now
+            }));
             
             this.events.push(event);
         },
