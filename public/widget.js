@@ -47,6 +47,17 @@
         widget.innerHTML = '';
         widget.appendChild(loadingDiv);
         
+        // Apply customizations if available
+        const customizationData = widget.getAttribute('data-customization');
+        if (customizationData) {
+            try {
+                const customization = JSON.parse(customizationData);
+                applyCustomizations(widget, customization);
+            } catch (e) {
+                console.warn('Failed to parse customization data:', e);
+            }
+        }
+        
         // Create iframe to load reviews
         const iframe = document.createElement('iframe');
         iframe.src = apiUrl + '/widget/' + widgetId + '/reviews';
@@ -57,9 +68,21 @@
             loadingDiv.style.display = 'none';
             iframe.style.display = 'block';
             
-            // Adjust iframe height based on content
+            // Apply customizations to iframe content if possible
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc) {
+                    // Apply customizations to iframe content
+                    const customizationData = widget.getAttribute('data-customization');
+                    if (customizationData) {
+                        try {
+                            const customization = JSON.parse(customizationData);
+                            applyCustomizationsToIframe(iframeDoc, customization);
+                        } catch (e) {
+                            console.warn('Failed to apply customizations to iframe:', e);
+                        }
+                    }
+                }
                 iframe.style.height = iframeDoc.body.scrollHeight + 'px';
             } catch (e) {
                 // Cross-origin restrictions, use default height
@@ -80,4 +103,152 @@
         // Add iframe to widget
         widget.appendChild(iframe);
     });
+    
+    // Function to apply customizations
+    function applyCustomizations(widget, customization) {
+        const colors = customization.colors || {};
+        const typography = customization.typography || {};
+        const layout = customization.layout || {};
+        const effects = customization.effects || {};
+        
+        // Apply base styles to widget
+        widget.style.cssText += `
+            font-family: ${typography.font_family || 'inherit'};
+            font-size: ${typography.font_size || '14px'};
+            font-weight: ${typography.font_weight || 'normal'};
+            max-width: ${layout.max_width || '600px'};
+            margin: ${layout.margin || '10px 0'};
+            animation: ${effects.animation || 'fadeIn 0.3s ease'};
+        `;
+        
+        // Add CSS for child elements
+        const style = document.createElement('style');
+        style.textContent = `
+            #sitepulse-reviews .reviews-container {
+                background: ${colors.background || '#ffffff'};
+                border-radius: ${layout.border_radius || '8px'};
+                padding: ${layout.padding || '16px'};
+                box-shadow: ${effects.box_shadow || '0 2px 8px rgba(0,0,0,0.1)'};
+            }
+            
+            #sitepulse-reviews .review-item {
+                background: ${colors.background || '#ffffff'};
+                border-radius: ${layout.border_radius || '8px'};
+                box-shadow: ${effects.box_shadow || '0 2px 8px rgba(0,0,0,0.1)'};
+                border-left-color: ${colors.primary || '#007bff'};
+            }
+            
+            #sitepulse-reviews .review-item:hover {
+                box-shadow: ${effects.hover_shadow || '0 4px 12px rgba(0,0,0,0.15)'};
+            }
+            
+            #sitepulse-reviews .review-form-toggle,
+            #sitepulse-reviews .submit-btn {
+                background: ${colors.primary || '#007bff'};
+                color: white;
+                border-radius: ${layout.border_radius || '8px'};
+            }
+            
+            #sitepulse-reviews .star-label.active {
+                color: ${colors.accent || '#ffc107'};
+            }
+            
+            #sitepulse-reviews .reviews-title {
+                color: ${colors.text || '#333333'};
+            }
+            
+            #sitepulse-reviews .review-comment {
+                color: ${colors.text || '#333333'};
+            }
+            
+            #sitepulse-reviews .review-name {
+                color: ${colors.text || '#333333'};
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        
+        document.head.appendChild(style);
+    }
+    
+    // Function to apply customizations to iframe content
+    function applyCustomizationsToIframe(iframeDoc, customization) {
+        const colors = customization.colors || {};
+        const typography = customization.typography || {};
+        const layout = customization.layout || {};
+        const effects = customization.effects || {};
+        
+        // Create style element for iframe
+        const style = iframeDoc.createElement('style');
+        style.textContent = `
+            .reviews-container {
+                background: ${colors.background || '#ffffff'} !important;
+                border-radius: ${layout.border_radius || '8px'} !important;
+                padding: ${layout.padding || '16px'} !important;
+                box-shadow: ${effects.box_shadow || '0 2px 8px rgba(0,0,0,0.1)'} !important;
+            }
+            
+            .review-item {
+                background: ${colors.background || '#ffffff'} !important;
+                border-radius: ${layout.border_radius || '8px'} !important;
+                box-shadow: ${effects.box_shadow || '0 2px 8px rgba(0,0,0,0.1)'} !important;
+                border-left-color: ${colors.primary || '#007bff'} !important;
+            }
+            
+            .review-item:hover {
+                box-shadow: ${effects.hover_shadow || '0 4px 12px rgba(0,0,0,0.15)'} !important;
+            }
+            
+            .review-form-toggle,
+            .submit-btn {
+                background: ${colors.primary || '#007bff'} !important;
+                color: white !important;
+                border-radius: ${layout.border_radius || '8px'} !important;
+            }
+            
+            .star-label.active {
+                color: ${colors.accent || '#ffc107'} !important;
+            }
+            
+            .reviews-title {
+                color: ${colors.text || '#333333'} !important;
+            }
+            
+            .review-comment {
+                color: ${colors.text || '#333333'} !important;
+            }
+            
+            .review-name {
+                color: ${colors.text || '#333333'} !important;
+            }
+            
+            body {
+                font-family: ${typography.font_family || 'inherit'} !important;
+                font-size: ${typography.font_size || '14px'} !important;
+                font-weight: ${typography.font_weight || 'normal'} !important;
+            }
+            
+            .reviews-container {
+                max-width: ${layout.max_width || '600px'} !important;
+                margin: ${layout.margin || '10px 0'} !important;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes bounceIn {
+                0% { opacity: 0; transform: scale(0.3); }
+                50% { opacity: 1; transform: scale(1.05); }
+                70% { transform: scale(0.9); }
+                100% { opacity: 1; transform: scale(1); }
+            }
+        `;
+        
+        iframeDoc.head.appendChild(style);
+    }
 })();

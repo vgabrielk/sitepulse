@@ -86,7 +86,12 @@
         <!-- Review Embed Code -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="card-title mb-0">Review Embed Code</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Review Embed Code</h5>
+                    <a href="{{ route('sites.customize', $site) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-palette"></i> Customize Widget
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <p class="text-muted">Add this code to your website to display customer reviews:</p>

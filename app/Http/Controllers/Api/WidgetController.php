@@ -276,10 +276,21 @@ class WidgetController extends Controller
             return $visit;
         }
         
+        // Find or create page for this URL
+        $page = \App\Models\Page::firstOrCreate([
+            'site_id' => $session->site_id,
+            'url' => $url,
+        ], [
+            'title' => $title,
+            'path' => parse_url($url, PHP_URL_PATH) ?? '/',
+            'query_string' => parse_url($url, PHP_URL_QUERY),
+            'hash' => parse_url($url, PHP_URL_FRAGMENT),
+        ]);
+        
         // Create new visit
         return \App\Models\Visit::create([
             'session_id' => $session->id,
-            'page_id' => 1, // Default page
+            'page_id' => $page->id,
             'url' => $url,
             'title' => $title,
             'visited_at' => now(),

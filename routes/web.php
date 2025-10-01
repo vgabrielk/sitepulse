@@ -49,6 +49,8 @@ Route::middleware(['auth:web'])->group(function () {
     // Sites
     Route::resource('sites', SiteController::class);
     Route::post('/sites/{site}/toggle-status', [SiteController::class, 'toggleStatus'])->name('sites.toggle-status');
+    Route::get('/sites/{site}/customize', [SiteController::class, 'customize'])->name('sites.customize');
+    Route::post('/sites/{site}/customize', [SiteController::class, 'saveCustomization'])->name('sites.save-customization');
     
     // Analytics
     Route::prefix('analytics')->name('analytics.')->group(function () {

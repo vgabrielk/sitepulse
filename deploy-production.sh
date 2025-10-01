@@ -70,3 +70,4 @@ echo ""
 echo "🎉 Sistema funcionando em produção!"
 echo "📋 URLs importantes:"
 echo "- Widget Script: https://your-domain.com/widget/{widget-id}.js"
+

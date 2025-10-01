@@ -45,7 +45,9 @@ class DashboardController extends Controller
         $recentReviews = [];
         foreach ($recentSites as $site) {
             $siteReviews = $this->reviewService->getRecentReviews($site, 3);
-            $recentReviews = array_merge($recentReviews, $siteReviews);
+            // Convert ReviewDTO objects to arrays
+            $siteReviewsArray = array_map(fn($review) => $review->toArray(), $siteReviews);
+            $recentReviews = array_merge($recentReviews, $siteReviewsArray);
         }
         $recentReviews = array_slice($recentReviews, 0, 5);
         

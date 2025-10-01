@@ -197,4 +197,174 @@ class SiteController extends Controller
                 ->with('error', 'Failed to update site status: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Show widget customization page
+     */
+    public function customize(Site $site)
+    {
+        $user = Auth::user();
+        $client = $user->client;
+        
+        if (!$client || $site->client_id !== $client->id) {
+            abort(403, 'Unauthorized access to this site.');
+        }
+        
+        $customization = $site->widget_customization ?? $site->getDefaultCustomization();
+        $themePresets = $this->getThemePresets();
+        
+        return view('dashboard.sites.customize', compact('site', 'customization', 'themePresets'));
+    }
+
+    /**
+     * Save widget customization
+     */
+    public function saveCustomization(Site $site, Request $request)
+    {
+        $user = Auth::user();
+        $client = $user->client;
+        
+        if (!$client || $site->client_id !== $client->id) {
+            abort(403, 'Unauthorized access to this site.');
+        }
+        
+        $request->validate([
+            'colors.primary' => 'required|string',
+            'colors.secondary' => 'required|string',
+            'colors.background' => 'required|string',
+            'colors.text' => 'required|string',
+            'colors.accent' => 'required|string',
+            'typography.font_family' => 'required|string',
+            'typography.font_size' => 'required|string',
+            'typography.font_weight' => 'required|string',
+            'layout.border_radius' => 'required|string',
+            'layout.padding' => 'required|string',
+            'layout.margin' => 'required|string',
+            'layout.max_width' => 'required|string',
+            'effects.box_shadow' => 'required|string',
+            'effects.hover_shadow' => 'required|string',
+            'effects.animation' => 'required|string',
+        ]);
+
+        $customization = $request->only([
+            'colors', 'typography', 'layout', 'effects'
+        ]);
+
+        $site->update(['widget_customization' => $customization]);
+
+        return redirect()->back()->with('success', 'Widget customization saved successfully!');
+    }
+
+    /**
+     * Get theme presets
+     */
+    private function getThemePresets(): array
+    {
+        return [
+            'default' => [
+                'name' => 'Default',
+                'colors' => [
+                    'primary' => '#007bff',
+                    'secondary' => '#6c757d',
+                    'background' => '#ffffff',
+                    'text' => '#333333',
+                    'accent' => '#f39c12',
+                ],
+                'typography' => [
+                    'font_family' => 'inherit',
+                    'font_size' => '14px',
+                    'font_weight' => 'normal',
+                ],
+                'layout' => [
+                    'border_radius' => '12px',
+                    'padding' => '20px',
+                    'margin' => '10px 0',
+                    'max_width' => '800px',
+                ],
+                'effects' => [
+                    'box_shadow' => '0 4px 12px rgba(0,0,0,0.1)',
+                    'hover_shadow' => '0 6px 20px rgba(0,0,0,0.15)',
+                    'animation' => 'fadeIn 0.3s ease',
+                ],
+            ],
+            'dark' => [
+                'name' => 'Dark Theme',
+                'colors' => [
+                    'primary' => '#0d6efd',
+                    'secondary' => '#6c757d',
+                    'background' => '#212529',
+                    'text' => '#ffffff',
+                    'accent' => '#ffc107',
+                ],
+                'typography' => [
+                    'font_family' => 'inherit',
+                    'font_size' => '14px',
+                    'font_weight' => 'normal',
+                ],
+                'layout' => [
+                    'border_radius' => '12px',
+                    'padding' => '20px',
+                    'margin' => '10px 0',
+                    'max_width' => '800px',
+                ],
+                'effects' => [
+                    'box_shadow' => '0 4px 12px rgba(0,0,0,0.3)',
+                    'hover_shadow' => '0 6px 20px rgba(0,0,0,0.4)',
+                    'animation' => 'fadeIn 0.3s ease',
+                ],
+            ],
+            'minimal' => [
+                'name' => 'Minimal',
+                'colors' => [
+                    'primary' => '#000000',
+                    'secondary' => '#666666',
+                    'background' => '#ffffff',
+                    'text' => '#000000',
+                    'accent' => '#000000',
+                ],
+                'typography' => [
+                    'font_family' => 'inherit',
+                    'font_size' => '14px',
+                    'font_weight' => 'normal',
+                ],
+                'layout' => [
+                    'border_radius' => '0px',
+                    'padding' => '16px',
+                    'margin' => '10px 0',
+                    'max_width' => '600px',
+                ],
+                'effects' => [
+                    'box_shadow' => 'none',
+                    'hover_shadow' => '0 2px 8px rgba(0,0,0,0.1)',
+                    'animation' => 'none',
+                ],
+            ],
+            'colorful' => [
+                'name' => 'Colorful',
+                'colors' => [
+                    'primary' => '#e91e63',
+                    'secondary' => '#9c27b0',
+                    'background' => '#f8f9fa',
+                    'text' => '#333333',
+                    'accent' => '#ff9800',
+                ],
+                'typography' => [
+                    'font_family' => 'inherit',
+                    'font_size' => '16px',
+                    'font_weight' => '500',
+                ],
+                'layout' => [
+                    'border_radius' => '20px',
+                    'padding' => '24px',
+                    'margin' => '10px 0',
+                    'max_width' => '900px',
+                ],
+                'effects' => [
+                    'box_shadow' => '0 8px 32px rgba(233,30,99,0.2)',
+                    'hover_shadow' => '0 12px 40px rgba(233,30,99,0.3)',
+                    'animation' => 'fadeIn 0.5s ease',
+                ],
+            ],
+        ];
+    }
 }

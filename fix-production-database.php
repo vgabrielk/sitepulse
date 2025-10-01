@@ -92,3 +92,4 @@ try {
     echo "💡 Verifique a configuração do banco de dados\n";
     echo "💡 Verifique se o banco existe e está acessível\n";
 }
+
