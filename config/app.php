@@ -171,6 +171,7 @@ return [
         App\Providers\MigrationServiceProvider::class,
         App\Providers\CustomViewServiceProvider::class,
         App\Providers\DatabaseServiceProvider::class,
+        App\Providers\FixMigrationProvider::class,
     ])->toArray(),
 
     /*
