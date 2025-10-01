@@ -70,6 +70,19 @@ class WidgetController extends Controller
                 // Find or create visit for this URL
                 $visit = $this->findOrCreateVisitForURL($session, $eventData);
                 
+                // For pageview events, check if we already have a recent pageview for this URL
+                if ($eventData['type'] === 'pageview') {
+                    $recentPageview = \App\Models\Event::where('visit_id', $visit->id)
+                        ->where('event_type', 'pageview')
+                        ->where('occurred_at', '>', now()->subMinutes(5))
+                        ->first();
+                    
+                    if ($recentPageview) {
+                        // Skip creating duplicate pageview event
+                        continue;
+                    }
+                }
+                
                 // Create event
                 $event = \App\Models\Event::create([
                     'visit_id' => $visit->id,
@@ -264,15 +277,18 @@ class WidgetController extends Controller
         $url = $eventData['data']['url'] ?? '/';
         $title = $eventData['data']['title'] ?? '';
         
-        // Look for recent visit to same URL in last 5 minutes
+        // Look for recent visit to same URL in last 30 minutes (increased from 5 minutes)
         $visit = \App\Models\Visit::where('session_id', $session->id)
             ->where('url', $url)
-            ->where('visited_at', '>', now()->subMinutes(5))
+            ->where('visited_at', '>', now()->subMinutes(30))
             ->first();
         
         if ($visit) {
-            // Update visit timestamp
-            $visit->update(['visited_at' => now()]);
+            // Update visit timestamp and title if changed
+            $visit->update([
+                'visited_at' => now(),
+                'title' => $title
+            ]);
             return $visit;
         }
         
