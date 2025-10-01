@@ -76,7 +76,7 @@ class SessionRepository
     public function getSessionStats(int $siteId, string $startDate, string $endDate): array
     {
         $totalSessions = Session::where('site_id', $siteId)
-            ->whereBetween('started_at', [$startDate, $endDate])
+            ->whereBetween('started_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->count();
 
         $activeSessions = Session::where('site_id', $siteId)
@@ -85,12 +85,12 @@ class SessionRepository
             ->count();
 
         $avgDuration = Session::where('site_id', $siteId)
-            ->whereBetween('started_at', [$startDate, $endDate])
+            ->whereBetween('started_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->whereNotNull('duration_seconds')
             ->avg('duration_seconds');
 
         $bounceRate = Session::where('site_id', $siteId)
-            ->whereBetween('started_at', [$startDate, $endDate])
+            ->whereBetween('started_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->whereHas('visits', function ($query) {
                 $query->where('is_bounce', true);
             })

@@ -152,7 +152,7 @@ class AnalyticsService
         $visitsCount = \App\Models\Visit::whereHas('session', function ($query) use ($site) {
             $query->where('site_id', $site->id);
         })
-        ->whereBetween('visited_at', [$startDate, $endDate])
+        ->whereBetween('visited_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
         ->count();
         
         return [

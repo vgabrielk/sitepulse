@@ -92,7 +92,7 @@
             </div>
             <div class="card-body">
                 @if($reviews->count() > 0)
-                    <form id="bulkActionsForm" method="POST">
+                    <form id="bulkActionsForm" method="POST" action="{{ route('reviews.bulk-approve') }}">
                         @csrf
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -146,7 +146,7 @@
                                             <td>
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     @if($review['status'] === 'pending')
-                                                        <form method="POST" action="{{ route('reviews.approve', $review['id']) }}" class="d-inline">
+                                                        <form method="POST" action="{{ route('reviews.approve', ['review' => $review['id']]) }}" class="d-inline approve-form">
                                                             @csrf
                                                             <button type="submit" class="btn btn-outline-success" title="Approve">
                                                                 <i class="fas fa-check"></i>

@@ -72,13 +72,13 @@ class EventRepository
         $totalEvents = Event::whereHas('visit.session', function ($query) use ($siteId) {
             $query->where('site_id', $siteId);
         })
-        ->whereBetween('occurred_at', [$startDate, $endDate])
+        ->whereBetween('occurred_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
         ->count();
 
         $eventTypes = Event::whereHas('visit.session', function ($query) use ($siteId) {
             $query->where('site_id', $siteId);
         })
-        ->whereBetween('occurred_at', [$startDate, $endDate])
+        ->whereBetween('occurred_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
         ->selectRaw('event_type, COUNT(*) as count')
         ->groupBy('event_type')
         ->orderBy('count', 'desc')
