@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Simples SitePulse</title>
+</head>
+<body>
+    <h1>Teste Simples</h1>
+    <button onclick="testClick()">Clique Aqui</button>
+    <div style="height: 2000px; background: #f0f0f0; margin: 20px 0;">
+        <p>Role para baixo para testar scroll</p>
+    </div>
+
+    <!-- SitePulse Analytics -->
+    <script async src="http://localhost:8000/widget/sp_780370e55fca84c9bbf69fb9e9527994.js"></script>
+    <!-- End SitePulse Analytics -->
+
+    <script>
+        function testClick() {
+            alert('Botão clicado!');
+        }
+        
+        // Debug: Verificar se SitePulse carregou
+        setTimeout(function() {
+            console.log('SitePulse carregado:', typeof window.SitePulse !== 'undefined');
+            if (window.SitePulse) {
+                console.log('SitePulse config:', {
+                    siteId: window.SitePulse.siteId,
+                    widgetId: window.SitePulse.widgetId,
+                    apiUrl: window.SitePulse.apiUrl
+                });
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste SitePulse Reviews</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .content {
+            line-height: 1.8;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .scroll-area {
+            height: 2000px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 SitePulse Reviews Test</h1>
+        
+        <div class="content">
+            <p>Esta é uma página de teste para demonstrar o widget SitePulse com funcionalidade de reviews.</p>
+            <p>Você deve ver um botão "⭐ Reviews" no canto inferior direito da página.</p>
+            <p>Clique nele para ver o iframe de reviews funcionando!</p>
+        </div>
+        
+        <div class="info">
+            <h3>🎯 Funcionalidades Testadas:</h3>
+            <ul>
+                <li>✅ Tracking de pageview</li>
+                <li>✅ Tracking de eventos de clique</li>
+                <li>✅ Tracking de scroll</li>
+                <li>✅ Botão de reviews flutuante</li>
+                <li>✅ Iframe de reviews responsivo</li>
+            </ul>
+        </div>
+        
+        <button class="button" onclick="testClick()">Clique Aqui para Testar</button>
+        <button class="button" onclick="testForm()">Testar Formulário</button>
+        
+        <div class="scroll-area">
+            <h3>📜 Área de Scroll</h3>
+            <p>Role para baixo para testar eventos de scroll...</p>
+            <p>Continue rolando para gerar mais eventos...</p>
+            <p>O widget SitePulse está rastreando todos os seus movimentos!</p>
+        </div>
+        
+        <div class="info">
+            <h3>🔍 Como Testar:</h3>
+            <ol>
+                <li>Observe o botão "⭐ Reviews" no canto inferior direito</li>
+                <li>Clique no botão para abrir o iframe de reviews</li>
+                <li>Veja os 10 reviews organizados em colunas</li>
+                <li>Observe o layout responsivo que se adapta ao tamanho da tela</li>
+                <li>Feche o iframe clicando no "×"</li>
+                <li>Interaja com a página para gerar eventos</li>
+            </ol>
+        </div>
+        
+        <div class="info">
+            <h3>✨ Novidades:</h3>
+            <ul>
+                <li>📱 Layout responsivo em colunas</li>
+                <li>🎨 Cards com hover effects</li>
+                <li>📊 Contador de reviews</li>
+                <li>⭐ Sistema de rating visual</li>
+                <li>💬 Comentários organizados</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SitePulse Analytics -->
+    <script async src="http://localhost:8000/widget/sp_780370e55fca84c9bbf69fb9e9527994.js"></script>
+    <!-- End SitePulse Analytics -->
+
+    <script>
+        function testClick() {
+            alert('Botão clicado! Evento registrado pelo SitePulse.');
+        }
+        
+        function testForm() {
+            alert('Teste de formulário! Evento registrado pelo SitePulse.');
+        }
+        
+        // Monitor SitePulse
+        setTimeout(function() {
+            if (typeof window.SitePulse !== 'undefined') {
+                console.log('✅ SitePulse carregado com sucesso!');
+                console.log('📊 Configuração:', {
+                    siteId: window.SitePulse.siteId,
+                    widgetId: window.SitePulse.widgetId,
+                    apiUrl: window.SitePulse.apiUrl
+                });
+                console.log('⭐ Reviews disponível:', typeof window.SitePulse.reviews);
+            } else {
+                console.log('❌ SitePulse não carregou');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
