@@ -41,4 +41,9 @@ class ApiUserProvider implements UserProvider
     {
         return $user->api_key === $credentials['api_key'] && $user->is_active;
     }
+
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): void
+    {
+        // Not needed for API authentication
+    }
 }
