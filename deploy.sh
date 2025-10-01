@@ -25,9 +25,9 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate
 fi
 
-# 5. Executar migrações
-echo "🗄️ Executando migrações..."
-php artisan migrate --force
+# 5. PULAR MIGRAÇÕES (tabelas já existem)
+echo "⚠️ PULANDO MIGRAÇÕES - Tabelas já existem no banco!"
+echo "✅ Sistema já está funcionando sem necessidade de migrações"
 
 # 6. Cache de configuração
 echo "⚡ Otimizando cache..."

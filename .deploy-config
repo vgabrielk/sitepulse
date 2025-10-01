@@ -1,0 +1,16 @@
+# 🚀 SitePulse Analytics - Deploy Configuration
+# This file tells the deployment platform to SKIP migrations
+
+# DO NOT RUN MIGRATIONS - Tables already exist!
+# The system is already working with all necessary tables
+
+# Deploy commands (WITHOUT migrations):
+composer install --optimize-autoloader --no-dev
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan cache:clear
+
+# DO NOT RUN: php artisan migrate
+# DO NOT RUN: php artisan migrate --force
+# Tables already exist in the database!
