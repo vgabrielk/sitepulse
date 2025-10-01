@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('metrics', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->constrained()->onDelete('cascade');
-            $table->string('metric_type');
-            $table->string('metric_name');
+            $table->string('metric_type'); // visits, sessions, events, etc.
+            $table->string('metric_name'); // specific metric name
             $table->decimal('value', 15, 4);
             $table->date('date');
-            $table->string('period')->default('daily');
-            $table->json('dimensions')->nullable();
+            $table->string('period')->default('daily'); // daily, weekly, monthly
+            $table->json('dimensions')->nullable(); // Additional metric dimensions
             $table->timestamps();
             
             $table->index(['site_id', 'metric_type', 'date']);

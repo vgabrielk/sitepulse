@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('site_id')->constrained()->onDelete('cascade');
             $table->string('session_token')->unique();
-            $table->string('visitor_id')->nullable();
+            $table->string('visitor_id')->nullable(); // Anonymous visitor identifier
             $table->string('ip_address')->nullable();
             $table->string('user_agent')->nullable();
             $table->string('country')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('utm_source')->nullable();
             $table->string('utm_medium')->nullable();
             $table->string('utm_campaign')->nullable();
-            $table->json('device_info')->nullable();
+            $table->json('device_info')->nullable(); // Browser, OS, device type
             $table->timestamp('started_at');
             $table->timestamp('last_activity_at');
             $table->timestamp('ended_at')->nullable();
@@ -32,9 +32,9 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index(['site_id', 'started_at']);
-            $table->index('session_token');
-            $table->index('visitor_id');
-            $table->index('last_activity_at');
+            $table->index(['session_token']);
+            $table->index(['visitor_id']);
+            $table->index(['last_activity_at']);
         });
     }
 

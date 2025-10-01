@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('survey_id')->constrained()->onDelete('cascade');
             $table->foreignId('session_id')->nullable()->constrained('analytics_sessions')->onDelete('set null');
-            $table->json('responses'); // Survey responses data
+            $table->json('responses');
             $table->string('ip_address')->nullable();
             $table->timestamp('submitted_at');
             $table->timestamps();

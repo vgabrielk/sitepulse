@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('url');
             $table->string('title')->nullable();
             $table->timestamp('visited_at');
-            $table->integer('time_on_page')->nullable();
-            $table->integer('scroll_depth')->nullable();
+            $table->integer('time_on_page')->nullable(); // in seconds
+            $table->integer('scroll_depth')->nullable(); // percentage
             $table->boolean('is_bounce')->default(false);
             $table->boolean('is_exit')->default(false);
-            $table->json('page_data')->nullable();
+            $table->json('page_data')->nullable(); // Additional page metadata
             $table->timestamps();
             
             $table->index(['session_id', 'visited_at']);

@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('visit_id')->constrained()->onDelete('cascade');
-            $table->string('event_type');
-            $table->string('element_selector')->nullable();
-            $table->string('element_text')->nullable();
-            $table->string('element_tag')->nullable();
-            $table->json('coordinates')->nullable();
-            $table->json('event_data')->nullable();
+            $table->string('event_type'); // click, scroll, form_submit, etc.
+            $table->string('element_selector')->nullable(); // CSS selector
+            $table->string('element_text')->nullable(); // Text content of element
+            $table->string('element_tag')->nullable(); // HTML tag name
+            $table->json('coordinates')->nullable(); // x, y coordinates
+            $table->json('event_data')->nullable(); // Additional event metadata
             $table->timestamp('occurred_at');
             $table->timestamps();
             

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('webhook_url')->nullable();
             $table->string('webhook_secret')->nullable();
             $table->enum('plan', ['free', 'basic', 'premium', 'enterprise'])->default('free');
-            $table->json('plan_limits')->nullable();
-            $table->json('settings')->nullable();
+            $table->json('plan_limits')->nullable(); // Store plan limits as JSON
+            $table->json('settings')->nullable(); // Store client-specific settings
             $table->boolean('is_active')->default(true);
             $table->timestamp('trial_ends_at')->nullable();
             $table->timestamp('subscription_ends_at')->nullable();

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('domain');
             $table->string('widget_id')->unique();
-            $table->json('widget_config')->nullable();
-            $table->json('tracking_config')->nullable();
+            $table->json('widget_config')->nullable(); // Widget customization settings
+            $table->json('tracking_config')->nullable(); // Tracking settings
             $table->boolean('is_active')->default(true);
             $table->boolean('anonymize_ips')->default(true);
             $table->boolean('track_events')->default(true);

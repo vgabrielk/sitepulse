@@ -17,18 +17,18 @@ return new class extends Migration
             $table->foreignId('session_id')->nullable()->constrained('analytics_sessions')->onDelete('set null');
             $table->string('visitor_name')->nullable();
             $table->string('visitor_email')->nullable();
-            $table->integer('rating');
+            $table->integer('rating'); // 1-5 stars
             $table->text('comment')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('ip_address')->nullable();
-            $table->json('metadata')->nullable();
+            $table->json('metadata')->nullable(); // Additional review data
             $table->timestamp('submitted_at');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
             
             $table->index(['site_id', 'status']);
             $table->index(['site_id', 'rating']);
-            $table->index('submitted_at');
+            $table->index(['submitted_at']);
         });
     }
 

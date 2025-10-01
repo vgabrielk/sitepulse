@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('site_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->json('questions');
-            $table->json('settings')->nullable();
+            $table->json('questions'); // Survey questions configuration
+            $table->json('settings')->nullable(); // Survey settings
             $table->boolean('is_active')->default(true);
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
