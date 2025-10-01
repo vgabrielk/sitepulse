@@ -16,19 +16,79 @@
             background: white;
             color: #333;
             line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
         }
         
         .reviews-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .reviews-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 16px;
             margin-top: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        @media (min-width: 768px) {
+            .reviews-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .reviews-container {
+                padding: 10px;
+            }
+            
+            .review-item {
+                padding: 15px;
+            }
+            
+            .review-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .review-form-toggle {
+                display: block;
+                margin: 0 auto;
+                text-align: center;
+            }
+            
+            .form-row {
+                display: block !important;
+            }
+            
+            .form-row .form-group {
+                width: 100% !important;
+                margin-bottom: 16px;
+            }
+            
+            .form-control, .form-select {
+                width: 100% !important;
+                box-sizing: border-box;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .submit-btn, .cancel-btn {
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
         }
         
         .reviews-header {
@@ -63,6 +123,11 @@
             border-left: 4px solid #3498db;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             height: fit-content;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .review-item:hover {
@@ -107,6 +172,10 @@
             font-size: 14px;
             color: #555;
             line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
         }
         
         .no-reviews {
@@ -324,7 +393,7 @@
             
             <!-- Review Form -->
             <div class="review-form" id="reviewForm">
-                <form method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}">
+                <form id="reviewFormElement" method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}">
                     @csrf
                     
                     @if(session('success'))
@@ -502,6 +571,70 @@
                         label.classList.remove('active');
                     }
                 });
+            }
+            
+            // Form submission with AJAX
+            const form = document.getElementById('reviewFormElement');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const submitBtn = form.querySelector('.submit-btn');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Show loading state
+                    submitBtn.innerHTML = 'Submitting...';
+                    submitBtn.disabled = true;
+                    
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            showMessage(data.message, 'success');
+                            form.reset();
+                            updateStarDisplay(0);
+                            toggleReviewForm(); // Close form
+                        } else {
+                            showMessage(data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showMessage('Failed to submit review. Please try again.', 'error');
+                    })
+                    .finally(() => {
+                        // Reset button
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    });
+                });
+            }
+            
+            function showMessage(message, type) {
+                // Remove existing messages
+                const existingAlerts = document.querySelectorAll('.alert');
+                existingAlerts.forEach(alert => alert.remove());
+                
+                // Create new message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.innerHTML = message;
+                
+                // Insert at the top of the form
+                const form = document.getElementById('reviewFormElement');
+                form.insertBefore(alertDiv, form.firstChild);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
             }
         });
     </script>

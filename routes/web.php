@@ -165,9 +165,17 @@ Route::post('/widget/{widgetId}/submit-review', function ($widgetId, \Illuminate
         
         \Log::info('Review created successfully', ['review_id' => $review->id, 'site_id' => $site->id]);
         
-        return redirect()->back()->with('success', 'Review submitted successfully! It will be reviewed before being published.');
+        // Return JSON response for iframe
+        return response()->json([
+            'success' => true,
+            'message' => 'Review submitted successfully! It will be reviewed before being published.',
+            'review_id' => $review->id
+        ]);
     } catch (\Exception $e) {
         \Log::error('Failed to create review', ['error' => $e->getMessage(), 'site_id' => $site->id]);
-        return redirect()->back()->with('error', 'Failed to submit review: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to submit review: ' . $e->getMessage()
+        ], 500);
     }
 })->name('widget.submit-review.post');
