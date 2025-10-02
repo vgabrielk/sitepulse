@@ -1,12 +1,12 @@
-# SitePulse Analytics - Micro-SaaS Platform
+# SitePulse Widgets - Micro-SaaS Platform
 
-SitePulse é uma plataforma completa de analytics e feedback para websites, desenvolvida como um micro-SaaS multi-tenant. O sistema permite que clientes monitorem visitantes, sessões, eventos e coletem feedback diretamente em seus sites através de widgets embed.
+SitePulse é uma plataforma de widgets de feedback para websites, desenvolvida como um micro-SaaS multi-tenant. O sistema permite que clientes coletem avaliações e exibam widgets em seus sites.
 
 ## 🚀 Funcionalidades
 
 ### Para Clientes
 - **Widget Embed**: Script JavaScript leve para integração em qualquer site
-- **Analytics em Tempo Real**: Monitoramento de visitantes, sessões e eventos
+- **Widgets de Reviews**: Coleta e exibição de avaliações
 - **Feedback Collection**: Sistema de reviews e testemunhos
 - **Dashboard Completo**: Métricas detalhadas e relatórios
 - **Customização**: Cores, posicionamento e configurações do widget
@@ -124,12 +124,8 @@ X-API-Key: your-api-key-here
 - `DELETE /api/sites/{id}` - Deletar site
 - `GET /api/sites/{id}/widget-code` - Código do widget
 
-#### Analytics
-- `GET /api/analytics/sites/{id}/overview` - Visão geral
-- `GET /api/analytics/sites/{id}/sessions` - Sessões
-- `GET /api/analytics/sites/{id}/events` - Eventos
-- `GET /api/analytics/sites/{id}/top-pages` - Páginas mais visitadas
-- `GET /api/analytics/sites/{id}/heatmap` - Dados de heatmap
+#### Widgets
+Rotas públicas e APIs para script do widget, reviews e configuração.
 
 #### Reviews
 - `GET /api/reviews/sites/{id}` - Listar reviews
@@ -142,9 +138,9 @@ X-API-Key: your-api-key-here
 ### Integração Básica
 
 ```html
-<!-- SitePulse Analytics -->
+<!-- SitePulse Widget -->
 <script async src="http://localhost:8000/widget/{widget-id}.js"></script>
-<!-- End SitePulse Analytics -->
+<!-- End SitePulse Widget -->
 ```
 
 ### Configuração Avançada
@@ -255,4 +251,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 ---
 
-**SitePulse Analytics** - Transformando dados em insights valiosos para seu negócio.
+**SitePulse Widgets** - Colete reviews e exiba widgets lindos no seu site.

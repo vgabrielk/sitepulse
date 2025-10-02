@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Registrar - SitePulse Analytics')
+@section('title', 'Registrar - SitePulse Widgets')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-[70vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
         <div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -21,93 +21,84 @@
             @csrf
             
             @if ($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+                <x-ui.alert variant="error" title="Erros na submissão">
                     <ul class="list-disc list-inside">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div>
+                </x-ui.alert>
             @endif
 
             @if ($errors->has('_token'))
-                <div class="bg-yellow-50 border border-yellow-200 text-yellow-600 px-4 py-3 rounded">
-                    <p class="font-medium">Sessão Expirada</p>
+                <x-ui.alert variant="warning" title="Sessão expirada">
                     <p class="text-sm">{{ $errors->first('_token') }}</p>
-                </div>
+                </x-ui.alert>
             @endif
 
             @if (session('success'))
-                <div class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded">
-                    {{ session('success') }}
-                </div>
+                <x-ui.alert variant="success" title="Sucesso">{{ session('success') }}</x-ui.alert>
             @endif
 
             <div class="space-y-4">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nome completo</label>
+                    <label for="name" class="block text-sm font-medium mb-2">Nome completo</label>
                     <input id="name" name="name" type="text" autocomplete="name" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="Seu nome completo" value="{{ old('name') }}">
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <label for="email" class="block text-sm font-medium mb-2">Email</label>
                     <input id="email" name="email" type="email" autocomplete="email" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="seu@email.com" value="{{ old('email') }}">
                 </div>
 
                 <div>
-                    <label for="company" class="block text-sm font-medium text-gray-700">Empresa (opcional)</label>
+                    <label for="company" class="block text-sm font-medium mb-2">Empresa (opcional)</label>
                     <input id="company" name="company" type="text" 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="Nome da sua empresa" value="{{ old('company') }}">
                 </div>
 
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700">Telefone (opcional)</label>
+                    <label for="phone" class="block text-sm font-medium mb-2">Telefone (opcional)</label>
                     <input id="phone" name="phone" type="tel" 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="(11) 99999-9999" value="{{ old('phone') }}">
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
+                    <label for="password" class="block text-sm font-medium mb-2">Senha</label>
                     <input id="password" name="password" type="password" autocomplete="new-password" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="Mínimo 8 caracteres">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirmar senha</label>
+                    <label for="password_confirmation" class="block text-sm font-medium mb-2">Confirmar senha</label>
                     <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+                           class="w-full px-4 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring" 
                            placeholder="Digite a senha novamente">
                 </div>
             </div>
 
-            <div class="flex items-center">
-                <input id="terms" name="terms" type="checkbox" required
-                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                <label for="terms" class="ml-2 block text-sm text-gray-900">
+            <div class="flex items-center gap-3">
+                <input id="terms" name="terms" type="checkbox" required class="sr-only peer">
+                <div class="w-11 h-6 bg-input peer-checked:bg-primary rounded-full peer relative transition-colors">
+                    <div class="absolute top-0.5 left-0.5 bg-card w-5 h-5 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                </div>
+                <label for="terms" class="text-sm">
                     Eu aceito os 
-                    <a href="#" class="text-indigo-600 hover:text-indigo-500">termos de uso</a> 
+                    <a href="#" class="text-primary hover:underline">termos de uso</a> 
                     e a 
-                    <a href="#" class="text-indigo-600 hover:text-indigo-500">política de privacidade</a>
+                    <a href="#" class="text-primary hover:underline">política de privacidade</a>
                 </label>
             </div>
 
             <div>
-                <button type="submit" 
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 11-2 0 1 1 0 012 0zM6 7a1 1 0 11-2 0 1 1 0 012 0z" />
-                        </svg>
-                    </span>
-                    Criar conta
-                </button>
+                <x-ui.button type="submit" class="w-full">Criar conta</x-ui.button>
             </div>
         </form>
     </div>

@@ -30,8 +30,8 @@ class WidgetService
     {
         $scriptUrl = url("/widget/{$site->widget_id}.js");
         
-        return "<!-- SitePulse Analytics -->
+        return "<!-- SitePulse Widget -->
 <script async src=\"{$scriptUrl}\"></script>
-<!-- End SitePulse Analytics -->";
+<!-- End SitePulse Widget -->";
     }
 }

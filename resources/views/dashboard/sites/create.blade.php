@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Add Site - SitePulse Analytics')
+@section('title', 'Add Site - SitePulse Widgets')
 @section('page-title', 'Add New Site')
 
 @section('content')

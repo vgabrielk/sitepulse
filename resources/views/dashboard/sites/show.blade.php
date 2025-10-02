@@ -1,184 +1,162 @@
 @extends('dashboard.layout')
 
-@section('title', $site->name . ' - SitePulse Analytics')
+@section('title', $site->name . ' - SitePulse Widgets')
 @section('page-title', $site->name)
 
 @section('page-actions')
-    <div class="btn-group" role="group">
-        <a href="{{ route('sites.edit', $site) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-edit me-1"></i>
-            Edit
-        </a>
-        <a href="{{ route('analytics.site', $site) }}" class="btn btn-primary">
-            <i class="fas fa-chart-bar me-1"></i>
-            View Analytics
-        </a>
+    <div class="flex items-center gap-2">
+        <x-ui.button href="{{ route('sites.edit', $site) }}" variant="outline">Edit</x-ui.button>
     </div>
 @endsection
 
 @section('content')
-<div class="row">
-    <!-- Site Information -->
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Site Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Name:</strong> {{ $site->name }}</p>
-                        <p><strong>Domain:</strong> {{ $site->domain }}</p>
-                        <p><strong>Status:</strong> 
-                            <span class="badge bg-{{ $site->is_active ? 'success' : 'secondary' }}">
-                                {{ $site->is_active ? 'Active' : 'Inactive' }}
-                            </span>
-                        </p>
+<div class="space-y-6">
+    <x-ui.card>
+        <div class="flex flex-col gap-4">
+            <div class="flex items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center font-semibold shadow-md">
+                        {{ strtoupper(mb_substr($site->name, 0, 1)) }}
                     </div>
-                    <div class="col-md-6">
-                        <p><strong>Widget ID:</strong> <code>{{ $site->widget_id }}</code></p>
-                        <p><strong>Created:</strong> {{ $site->created_at->format('M d, Y') }}</p>
-                        <p><strong>Last Updated:</strong> {{ $site->updated_at->format('M d, Y') }}</p>
+                    <div>
+                        <div class="text-xs text-muted-foreground">Site</div>
+                        <div class="text-xl md:text-2xl font-semibold leading-tight">{{ $site->name }}</div>
+                        <a href="{{ Str::startsWith($site->domain, ['http://','https://']) ? $site->domain : 'https://'.$site->domain }}" target="_blank" class="text-sm text-primary underline break-all">
+                            {{ $site->domain }}
+                        </a>
                     </div>
                 </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Settings</h6>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <span class="badge bg-{{ $site->anonymize_ips ? 'success' : 'secondary' }}">
-                                    {{ $site->anonymize_ips ? 'IP Anonymized' : 'IP Not Anonymized' }}
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <span class="badge bg-{{ $site->track_events ? 'success' : 'secondary' }}">
-                                    {{ $site->track_events ? 'Events Tracked' : 'Events Not Tracked' }}
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <span class="badge bg-{{ $site->collect_feedback ? 'success' : 'secondary' }}">
-                                    {{ $site->collect_feedback ? 'Feedback Enabled' : 'Feedback Disabled' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Embed Code -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Embed Code</h5>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">Add this code to your website to start tracking analytics:</p>
-                <div class="input-group">
-                    <textarea class="form-control font-monospace" rows="3" readonly>{{ $embedCode }}</textarea>
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(this)">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Review Embed Code -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Review Embed Code</h5>
-                    <a href="{{ route('sites.customize', $site) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-palette"></i> Customize Widget
-                    </a>
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="text-muted">Add this code to your website to display customer reviews:</p>
-                <div class="input-group">
-                    <textarea class="form-control font-monospace" rows="4" readonly>{{ $reviewEmbedCode }}</textarea>
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(this)">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Statistics -->
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Statistics (Last 30 Days)</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6 mb-3">
-                        <div class="text-muted small">Sessions</div>
-                        <div class="h4 text-primary">{{ $stats['sessions'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <div class="text-muted small">Visits</div>
-                        <div class="h4 text-success">{{ $stats['visits'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted small">Events</div>
-                        <div class="h4 text-info">{{ $stats['events'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted small">Unique Visitors</div>
-                        <div class="h4 text-warning">{{ $stats['unique_visitors'] ?? 0 }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ route('analytics.site', $site) }}" class="btn btn-primary">
-                        <i class="fas fa-chart-bar me-1"></i>
-                        View Analytics
-                    </a>
-                    <a href="{{ route('reviews.site', $site) }}" class="btn btn-outline-primary">
-                        <i class="fas fa-star me-1"></i>
-                        View Reviews
-                    </a>
-                    <form method="POST" action="{{ route('sites.toggle-status', $site) }}" class="d-inline">
+                <div class="flex items-center gap-2">
+                    <x-ui.badge variant="{{ $site->is_active ? 'success' : 'muted' }}">{{ $site->is_active ? 'Ativo' : 'Inativo' }}</x-ui.badge>
+                    <form method="POST" action="{{ route('sites.toggle-status', $site) }}">
                         @csrf
-                        <button type="submit" class="btn btn-outline-{{ $site->is_active ? 'warning' : 'success' }} w-100">
-                            <i class="fas fa-{{ $site->is_active ? 'pause' : 'play' }} me-1"></i>
-                            {{ $site->is_active ? 'Deactivate' : 'Activate' }} Site
-                        </button>
+                        <x-ui.button type="submit" variant="outline">{{ $site->is_active ? 'Desativar' : 'Ativar' }}</x-ui.button>
                     </form>
+                    <x-ui.button href="{{ route('sites.edit', $site) }}" variant="outline">Editar</x-ui.button>
+                </div>
+            </div>
+
+            <div class="border-t border-border"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="rounded-lg border border-border p-3">
+                    <div class="text-xs text-muted-foreground">ID do Widget</div>
+                    <div class="mt-1 flex items-center justify-between gap-2">
+                        <code id="widgetIdText" class="text-sm break-all">{{ $site->widget_id }}</code>
+                        <x-ui.button type="button" size="sm" variant="outline" onclick="copyWidgetId()">Copiar</x-ui.button>
+                    </div>
+                </div>
+                <div class="rounded-lg border border-border p-3">
+                    <div class="text-xs text-muted-foreground">Criado em</div>
+                    <div class="mt-1 font-medium">{{ $site->created_at->format('d/m/Y') }}</div>
+                </div>
+                <div class="rounded-lg border border-border p-3">
+                    <div class="text-xs text-muted-foreground">Atualizado em</div>
+                    <div class="mt-1 font-medium">{{ $site->updated_at->format('d/m/Y') }}</div>
                 </div>
             </div>
         </div>
+    </x-ui.card>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <x-ui.card>
+            <h5 class="text-base font-semibold mb-4">Informações do site</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-muted-foreground"><strong>Nome:</strong> {{ $site->name }}</p>
+                    <p class="text-sm text-muted-foreground"><strong>Domínio:</strong> 
+                        <a href="{{ Str::startsWith($site->domain, ['http://','https://']) ? $site->domain : 'https://'.$site->domain }}" target="_blank" class="underline">{{ $site->domain }}</a>
+                    </p>
+                    <p class="text-sm text-muted-foreground"><strong>Status:</strong> 
+                        @if($site->is_active)
+                            <x-ui.badge variant="success">Ativo</x-ui.badge>
+                        @else
+                            <x-ui.badge variant="muted">Inativo</x-ui.badge>
+                        @endif
+                    </p>
+                </div>
+                <div>
+                    <p class="text-sm text-muted-foreground flex items-center gap-2"><strong>ID do Widget:</strong> <code id="widgetIdText">{{ $site->widget_id }}</code> <x-ui.button type="button" size="sm" variant="outline" onclick="copyWidgetId()">Copiar</x-ui.button></p>
+                    <p class="text-sm text-muted-foreground"><strong>Criado em:</strong> {{ $site->created_at->format('d/m/Y') }}</p>
+                    <p class="text-sm text-muted-foreground"><strong>Atualizado em:</strong> {{ $site->updated_at->format('d/m/Y') }}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h6 class="font-semibold mb-2">Configurações</h6>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="rounded-lg border border-border p-3 flex items-center justify-between">
+                        <div class="text-sm">IP anonimizado</div>
+                        <x-ui.badge variant="{{ $site->anonymize_ips ? 'success' : 'muted' }}">{{ $site->anonymize_ips ? 'Ativo' : 'Inativo' }}</x-ui.badge>
+                    </div>
+                    <div class="rounded-lg border border-border p-3 flex items-center justify-between">
+                        <div class="text-sm">Eventos</div>
+                        <x-ui.badge variant="{{ $site->track_events ? 'success' : 'muted' }}">{{ $site->track_events ? 'Ativo' : 'Inativo' }}</x-ui.badge>
+                    </div>
+                    <div class="rounded-lg border border-border p-3 flex items-center justify-between">
+                        <div class="text-sm">Feedback</div>
+                        <x-ui.badge variant="{{ $site->collect_feedback ? 'success' : 'muted' }}">{{ $site->collect_feedback ? 'Habilitado' : 'Desabilitado' }}</x-ui.badge>
+                    </div>
+                </div>
+            </div>
+        </x-ui.card>
+
+        {{-- Embeds removidos desta página conforme solicitado --}}
+    </div>
+
+    <div class="space-y-6">
+        <x-ui.card>
+            <h5 class="text-base font-semibold mb-4">Estatísticas (últimos 30 dias)</h5>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                    <div class="text-xs text-muted-foreground">Sessões</div>
+                    <div class="text-xl text-primary font-semibold">{{ $stats['sessions'] ?? 0 }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted-foreground">Visitas</div>
+                    <div class="text-xl text-success font-semibold">{{ $stats['visits'] ?? 0 }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted-foreground">Eventos</div>
+                    <div class="text-xl text-primary font-semibold">{{ $stats['events'] ?? 0 }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-muted-foreground">Visitantes únicos</div>
+                    <div class="text-xl text-warning font-semibold">{{ $stats['unique_visitors'] ?? 0 }}</div>
+                </div>
+            </div>
+        </x-ui.card>
+
+        <x-ui.card>
+            <h5 class="text-base font-semibold mb-4">Ações rápidas</h5>
+            <div class="grid gap-2">
+                <x-ui.button href="{{ route('reviews.site', $site) }}" variant="outline">Ver Reviews</x-ui.button>
+                <x-ui.button href="{{ route('sites.faq.index', $site) }}" variant="outline">Gerenciar FAQ</x-ui.button>
+                <x-ui.button href="{{ route('sites.customize', $site) }}" variant="outline">Personalizar Reviews</x-ui.button>
+            </div>
+        </x-ui.card>
+    </div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-function copyToClipboard(button) {
+function copySiblingTextarea(button){
     const textarea = button.previousElementSibling;
+    if(!textarea) return;
     textarea.select();
     document.execCommand('copy');
-    
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-check"></i>';
-    button.classList.remove('btn-outline-secondary');
-    button.classList.add('btn-success');
-    
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.classList.remove('btn-success');
-        button.classList.add('btn-outline-secondary');
-    }, 2000);
+    showToast('success', 'Copied to clipboard');
+}
+
+function copyWidgetId(){
+    var el = document.getElementById('widgetIdText');
+    if(!el) return;
+    var txt = el.textContent;
+    navigator.clipboard.writeText(txt).then(function(){
+        try { showToast && showToast('success', 'ID do widget copiado'); } catch(e) {}
+    });
 }
 </script>
 @endpush

@@ -19,6 +19,7 @@ class Site extends Model
         'widget_config',
         'tracking_config',
         'widget_customization',
+        'faq_customization',
         'is_active',
         'anonymize_ips',
         'track_events',
@@ -29,6 +30,7 @@ class Site extends Model
         'widget_config' => 'array',
         'tracking_config' => 'array',
         'widget_customization' => 'array',
+        'faq_customization' => 'array',
         'is_active' => 'boolean',
         'anonymize_ips' => 'boolean',
         'track_events' => 'boolean',
@@ -123,9 +125,9 @@ class Site extends Model
         $widgetUrl = config('app.url') . '/widget/' . $this->widget_id . '.js';
         
         return sprintf(
-            '<!-- SitePulse Analytics -->
+            '<!-- SitePulse Widget -->
 <script async src="%s"></script>
-<!-- End SitePulse Analytics -->',
+<!-- End SitePulse Widget -->',
             $widgetUrl
         );
     }

@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\SiteController;
 use App\Http\Controllers\Api\WidgetController;
-use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\ReviewController;
 
 /*
@@ -51,17 +50,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/sites/{id}/metrics', [SiteController::class, 'getMetrics'])->name('api.sites.metrics');
     Route::get('/sites/{id}/widget-code', [SiteController::class, 'getWidgetCode'])->name('api.sites.widget-code');
     
-    // Analytics routes
-    Route::prefix('analytics')->group(function () {
-        Route::get('/sites/{siteId}/overview', [AnalyticsController::class, 'getOverview']);
-        Route::get('/sites/{siteId}/sessions', [AnalyticsController::class, 'getSessions']);
-        Route::get('/sites/{siteId}/events', [AnalyticsController::class, 'getEvents']);
-        Route::get('/sites/{siteId}/top-pages', [AnalyticsController::class, 'getTopPages']);
-        Route::get('/sites/{siteId}/top-events', [AnalyticsController::class, 'getTopEvents']);
-        Route::get('/sites/{siteId}/heatmap', [AnalyticsController::class, 'getHeatmapData']);
-        Route::get('/sites/{siteId}/real-time', [AnalyticsController::class, 'getRealTimeMetrics']);
-        Route::get('/sites/{siteId}/trends', [AnalyticsController::class, 'getTrendData']);
-    });
     
     // Review routes
     Route::prefix('reviews')->group(function () {
@@ -79,11 +67,9 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [ReviewController::class, 'destroy']);
     });
     
-    // Export routes
+    // Export routes (widgets & reviews only)
     Route::prefix('exports')->group(function () {
-        Route::get('/sites/{siteId}/analytics', [AnalyticsController::class, 'exportAnalytics']);
         Route::get('/sites/{siteId}/reviews', [ReviewController::class, 'exportReviews']);
-        Route::get('/sites/{siteId}/events', [AnalyticsController::class, 'exportEvents']);
     });
 });
 
@@ -103,5 +89,4 @@ Route::middleware(['auth:api', 'admin'])->prefix('admin')->group(function () {
     Route::get('/stats/overview', [AuthController::class, 'getSystemStats']);
     Route::get('/stats/clients', [AuthController::class, 'getClientStats']);
     Route::get('/stats/sites', [SiteController::class, 'getSystemStats']);
-    Route::get('/stats/analytics', [AnalyticsController::class, 'getSystemStats']);
 });

@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     
-    // SitePulse Analytics Widget
+    // SitePulse Widget
     var SitePulse = {
         siteId: {{ $site->id }},
         widgetId: '{{ $site->widget_id }}',
@@ -299,16 +299,62 @@
         
         document.body.appendChild(button);
     };
+
+    // Render FAQ widget if present
+    SitePulse.mountFaq = function() {
+        var nodes = document.querySelectorAll('[data-sitepulse-faq]');
+        if (!nodes.length) return;
+        var scriptSelf = document.currentScript;
+        var base = scriptSelf ? new URL(scriptSelf.src).origin : (function(){ try { return new URL('{{ url('/') }}').origin; } catch(e){ return window.location.origin; } })();
+        var urlJson = base + '/widget/' + this.widgetId + '/faqs';
+        var urlJsonBySite = base + '/widget/faqs?site_id=' + this.siteId;
+        var urlEmbed = base + '/widget/' + this.widgetId + '/faq';
+        fetch(urlJson, { credentials: 'omit' }).then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; }).then(function(list){
+            nodes.forEach(function(n){
+                if (!Array.isArray(list) || !list.length) {
+                    // try by site_id as fallback
+                    fetch(urlJsonBySite, { credentials:'omit' }).then(function(r){ return r.ok ? r.json(): []; }).catch(function(){ return []; }).then(function(list2){
+                        if (!Array.isArray(list2) || !list2.length) {
+                            // fallback to embed view (iframe)
+                            n.innerHTML = '<iframe src="' + urlEmbed + '" style="width:100%;border:0;height:380px"></iframe>';
+                            return;
+                        }
+                        var html2 = list2.map(function(item){
+                            var q = (item.question||'').replace(/</g,'&lt;');
+                            var a = (item.answer||'').replace(/</g,'&lt;');
+                            return '<details style="padding:8px 0;border-bottom:1px solid #eee;">\
+<summary style="cursor:pointer;font-weight:600;outline:none;">'+ q +'</summary>\
+<div style="margin-top:6px;color:#444;">'+ a +'</div>\
+</details>';
+                        }).join('');
+                        n.innerHTML = html2;
+                    });
+                } else {
+                    var html = list.map(function(item){
+                        var q = (item.question||'').replace(/</g,'&lt;');
+                        var a = (item.answer||'').replace(/</g,'&lt;');
+                        return '<details style="padding:8px 0;border-bottom:1px solid #eee;">\
+<summary style="cursor:pointer;font-weight:600;outline:none;">'+ q +'</summary>\
+<div style="margin-top:6px;color:#444;">'+ a +'</div>\
+</details>';
+                    }).join('');
+                    n.innerHTML = html;
+                }
+            });
+        });
+    };
     
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             SitePulse.init();
             SitePulse.addReviewsButton();
+            SitePulse.mountFaq();
         });
     } else {
         SitePulse.init();
         SitePulse.addReviewsButton();
+        SitePulse.mountFaq();
     }
     
     // Make SitePulse available globally for debugging

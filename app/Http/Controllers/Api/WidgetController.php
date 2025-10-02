@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\WidgetService;
-use App\Services\AnalyticsService;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ReviewService;
 
 class WidgetController extends Controller
 {
     public function __construct(
         private WidgetService $widgetService,
-        private AnalyticsService $analyticsService
+        private ReviewService $reviewService
     ) {}
 
     public function getScript(string $widgetId): string
@@ -150,7 +150,7 @@ class WidgetController extends Controller
             $reviewData = $request->only(['rating', 'comment', 'visitor_name', 'visitor_email']);
             $reviewData['ip_address'] = $request->ip();
             
-            $review = $this->analyticsService->createReview($site, $reviewData, $session);
+            $review = $this->reviewService->createReview($site, $reviewData, $session);
             
             return response()->json([
                 'success' => true,
@@ -196,9 +196,9 @@ class WidgetController extends Controller
             $rating = $request->get('rating');
             
             if ($rating) {
-                $reviews = $this->analyticsService->getReviewsByRating($site, $rating, $limit);
+                $reviews = $this->reviewService->getReviewsByRating($site, $rating);
             } else {
-                $reviews = $this->analyticsService->getApprovedReviews($site, $limit);
+                $reviews = $this->reviewService->getApprovedReviews($site, $limit);
             }
             
             return response()->json([
@@ -323,7 +323,7 @@ class WidgetController extends Controller
                 ->first();
             
             if ($session && $session->isActive()) {
-                $this->analyticsService->updateSessionActivity($session);
+                $session->update(['last_activity_at' => now()]);
                 return $session;
             }
         }
@@ -337,7 +337,17 @@ class WidgetController extends Controller
             'device_info' => $this->getDeviceInfo($request->userAgent()),
         ];
         
-        return $this->analyticsService->createSession($site, $sessionData);
+        return \App\Models\Session::create([
+            'site_id' => $site->id,
+            'session_token' => 'sp_' . time() . '_' . rand(1000, 9999),
+            'ip_address' => $sessionData['ip_address'] ?? $request->ip(),
+            'user_agent' => $sessionData['user_agent'] ?? $request->userAgent(),
+            'referrer' => $sessionData['referrer'] ?? $request->header('Referer'),
+            'country' => $sessionData['country'] ?? null,
+            'device_info' => $sessionData['device_info'] ?? [],
+            'started_at' => now(),
+            'last_activity_at' => now(),
+        ]);
     }
 
     private function findOrCreateVisit(\App\Models\Session $session, array $eventData): \App\Models\Visit
@@ -365,10 +375,12 @@ class WidgetController extends Controller
             'hash' => parse_url($url, PHP_URL_FRAGMENT),
         ]);
         
-        return $this->analyticsService->trackVisit($session, [
+        return \App\Models\Visit::create([
+            'session_id' => $session->id,
             'page_id' => $page->id,
             'url' => $url,
             'title' => $title,
+            'visited_at' => now(),
         ]);
     }
 

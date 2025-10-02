@@ -29,10 +29,9 @@
                 </div>
                 <div class="card-body">
                     @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <x-ui.alert variant="success" title="Sucesso">
                             {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                        </x-ui.alert>
                     @endif
 
                     <form method="POST" action="{{ route('sites.save-customization', $site) }}" id="customizationForm">
@@ -221,7 +220,7 @@
                             <button type="button" class="btn btn-outline-secondary" onclick="resetToDefault()">
                                 <i class="fas fa-undo"></i> Reset to Default
                             </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="button" id="openReviewsPreview" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Customization
                             </button>
                         </div>
@@ -425,6 +424,87 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial preview update
     updatePreview();
+});
+</script>
+
+<script>
+// Modal de confirmação para Reviews
+document.addEventListener('DOMContentLoaded', function(){
+    const form = document.getElementById('customizationForm');
+    const openBtn = document.getElementById('openReviewsPreview');
+    if (!form || !openBtn) return;
+
+    function getVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+
+    function buildCustomizationJson(){
+        const customization = {
+            colors: {
+                primary: getVal('colors_primary'),
+                secondary: getVal('colors_secondary'),
+                background: getVal('colors_background'),
+                text: getVal('colors_text'),
+                accent: getVal('colors_accent')
+            },
+            typography: {
+                font_family: document.getElementById('typography_font_family')?.value || 'inherit',
+                font_size: document.getElementById('typography_font_size')?.value || '14px',
+                font_weight: document.getElementById('typography_font_weight')?.value || 'normal'
+            },
+            layout: {
+                border_radius: document.getElementById('layout_border_radius')?.value || '8px',
+                padding: document.getElementById('layout_padding')?.value || '16px',
+                margin: document.getElementById('layout_margin')?.value || '10px 0',
+                max_width: document.getElementById('layout_max_width')?.value || '600px'
+            },
+            effects: {
+                box_shadow: document.getElementById('effects_box_shadow')?.value || '0 2px 8px rgba(0,0,0,0.1)',
+                hover_shadow: document.getElementById('effects_hover_shadow')?.value || '0 4px 12px rgba(0,0,0,0.15)',
+                animation: document.getElementById('effects_animation')?.value || 'fadeIn 0.3s ease'
+            }
+        };
+        return JSON.stringify(customization);
+    }
+
+    function mountReviewsWidget(container){
+        const apiUrl = '{{ url('') }}';
+        const widgetId = '{{ $site->widget_id }}';
+        const div = document.createElement('div');
+        div.setAttribute('data-widget-id', widgetId);
+        div.setAttribute('data-api-url', apiUrl);
+        div.setAttribute('data-customization', buildCustomizationJson());
+        container.appendChild(div);
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = '{{ url('/widget.js') }}';
+        document.body.appendChild(script);
+    }
+
+    function openModal(){
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;';
+        const modal = document.createElement('div');
+        modal.style.cssText = 'background:#ffffff;border-radius:14px;max-width:1000px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)';
+        modal.innerHTML = '\
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eee">\
+  <div style="font-weight:700;color:#0f172a">Pré-visualização de Reviews</div>\
+  <button id="rvCloseModal" style="background:#eef2f7;border:0;border-radius:8px;padding:6px 10px;cursor:pointer">Fechar</button>\
+</div>\
+<div id="rvMount" style="padding:18px"></div>\
+<div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid #eee">\
+  <button id="rvCancel" style="background:#e5e7eb;border:0;border-radius:8px;padding:8px 14px;cursor:pointer">Cancelar</button>\
+  <button id="rvConfirm" style="background:#2563eb;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer">Confirmar e salvar</button>\
+</div>';
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        mountReviewsWidget(modal.querySelector('#rvMount'));
+
+        function close(){ document.body.removeChild(overlay); }
+        modal.querySelector('#rvCloseModal').onclick = close;
+        modal.querySelector('#rvCancel').onclick = close;
+        modal.querySelector('#rvConfirm').onclick = function(){ close(); form.submit(); };
+    }
+
+    openBtn.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
 });
 </script>
 @endsection

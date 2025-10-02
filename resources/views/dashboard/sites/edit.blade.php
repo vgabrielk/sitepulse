@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Edit ' . $site->name . ' - SitePulse Analytics')
+@section('title', 'Edit ' . $site->name . ' - SitePulse Widgets')
 @section('page-title', 'Edit Site')
 
 @section('content')

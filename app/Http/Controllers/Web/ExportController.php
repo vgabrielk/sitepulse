@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Services\AnalyticsService;
 use App\Services\ReviewService;
 use App\Models\Site;
 use Illuminate\Http\Request;
@@ -13,7 +12,6 @@ use Illuminate\Http\Response;
 class ExportController extends Controller
 {
     public function __construct(
-        private AnalyticsService $analyticsService,
         private ReviewService $reviewService
     ) {}
 
@@ -31,38 +29,6 @@ class ExportController extends Controller
         return view('dashboard.exports.index', compact('sites'));
     }
 
-    public function analytics(Request $request)
-    {
-        $request->validate([
-            'site_id' => 'required|exists:sites,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'format' => 'required|in:csv,json,xlsx'
-        ]);
-
-        $site = Site::findOrFail($request->site_id);
-        
-        $user = Auth::user();
-        $client = $user->client;
-        
-        if (!$client || $site->client_id !== $client->id) {
-            abort(403, 'Unauthorized access to this site.');
-        }
-
-        try {
-            $data = $this->analyticsService->getSiteMetrics(
-                $site,
-                $request->start_date,
-                $request->end_date
-            );
-
-            $filename = "analytics_{$site->name}_{$request->start_date}_to_{$request->end_date}";
-
-            return $this->exportData($data, $filename, $request->format);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to export analytics: ' . $e->getMessage());
-        }
-    }
 
     public function reviews(Request $request)
     {
@@ -97,38 +63,6 @@ class ExportController extends Controller
         }
     }
 
-    public function events(Request $request)
-    {
-        $request->validate([
-            'site_id' => 'required|exists:sites,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'format' => 'required|in:csv,json,xlsx'
-        ]);
-
-        $site = Site::findOrFail($request->site_id);
-        
-        $user = Auth::user();
-        $client = $user->client;
-        
-        if (!$client || $site->client_id !== $client->id) {
-            abort(403, 'Unauthorized access to this site.');
-        }
-
-        try {
-            $events = $this->analyticsService->getEventStats(
-                $site,
-                $request->start_date,
-                $request->end_date
-            );
-
-            $filename = "events_{$site->name}_{$request->start_date}_to_{$request->end_date}";
-
-            return $this->exportData($events, $filename, $request->format);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to export events: ' . $e->getMessage());
-        }
-    }
 
     private function exportData($data, $filename, $format)
     {

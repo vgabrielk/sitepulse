@@ -262,9 +262,7 @@
                     <a href="{{ route('admin.clients.create') }}" class="btn btn-primary">
                         <i class="fas fa-user-plus me-2"></i>Add New Client
                     </a>
-                    <a href="{{ route('admin.analytics.index') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-chart-bar me-2"></i>View Analytics
-                    </a>
+                    
                     <a href="{{ route('admin.system.logs') }}" class="btn btn-outline-primary">
                         <i class="fas fa-file-alt me-2"></i>View Logs
                     </a>

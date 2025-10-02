@@ -397,15 +397,17 @@
                     @csrf
                     
                     @if(session('success'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-success" id="inline-success" role="status">
                             {{ session('success') }}
                         </div>
+                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('success', @json(session('success'))); }catch(e){} });</script>
                     @endif
-                    
+
                     @if(session('error'))
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger" id="inline-error" role="status">
                             {{ session('error') }}
                         </div>
+                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('error', @json(session('error'))); }catch(e){} });</script>
                     @endif
                     
                     <div class="form-row">

@@ -79,19 +79,13 @@
 
                     <!-- Success/Error Messages -->
                     @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('success', @json(session('success'))); }catch(e){} });</script>
                     @endif
 
                     @if(session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
+                        <div class="alert alert-danger" role="status">{{ session('error') }}</div>
+                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('error', @json(session('error'))); }catch(e){} });</script>
                     @endif
 
                     <!-- Review Form -->

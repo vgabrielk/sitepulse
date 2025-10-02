@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Billing & Plans - SitePulse Analytics')
+@section('title', 'Billing & Plans - SitePulse Widgets')
 @section('page-title', 'Billing & Plans')
 
 @section('content')

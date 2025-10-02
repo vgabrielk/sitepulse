@@ -31,7 +31,7 @@ class PlanService
                     'retention_days' => 30,
                 ],
                 'features' => [
-                    'Basic analytics',
+                    'Basic widgets',
                     'Widget embed',
                     'Email support',
                     '30-day data retention',
@@ -54,7 +54,7 @@ class PlanService
                     'retention_days' => 90,
                 ],
                 'features' => [
-                    'Advanced analytics',
+                    'Advanced widgets',
                     'Custom widgets',
                     'Priority support',
                     '90-day data retention',
@@ -79,7 +79,7 @@ class PlanService
                     'retention_days' => 365,
                 ],
                 'features' => [
-                    'Premium analytics',
+                    'Premium widgets',
                     'Custom branding',
                     'Priority support',
                     '1-year data retention',

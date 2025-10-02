@@ -55,7 +55,9 @@ class ReviewController extends Controller
             return $reviewData;
         });
 
-        return view('dashboard.reviews.site', compact('site', 'reviews'));
+        $customization = $site->widget_customization ?? $site->getDefaultCustomization();
+
+        return view('dashboard.reviews.site', compact('site', 'reviews', 'customization'));
     }
 
 

@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Profile - SitePulse Analytics')
+@section('title', 'Profile - SitePulse Widgets')
 @section('page-title', 'Profile Settings')
 
 @section('content')

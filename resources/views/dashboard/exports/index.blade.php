@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Data Exports - SitePulse Analytics')
+@section('title', 'Data Exports - SitePulse Widgets')
 @section('page-title', 'Data Exports')
 
 @section('content')
@@ -13,23 +13,8 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <!-- Analytics Export -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
-                                <h5 class="card-title">Analytics Data</h5>
-                                <p class="card-text">Export sessions, visits, and events data for analysis.</p>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#analyticsExportModal">
-                                    <i class="fas fa-download me-1"></i>
-                                    Export Analytics
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- Reviews Export -->
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-6 mb-4">
                         <div class="card h-100">
                             <div class="card-body text-center">
                                 <i class="fas fa-star fa-3x text-warning mb-3"></i>
@@ -43,13 +28,13 @@
                         </div>
                     </div>
                     
-                    <!-- Events Export -->
-                    <div class="col-md-4 mb-4">
+                    <!-- Events Export (optional) -->
+                    <div class="col-md-6 mb-4">
                         <div class="card h-100">
                             <div class="card-body text-center">
                                 <i class="fas fa-mouse-pointer fa-3x text-info mb-3"></i>
                                 <h5 class="card-title">Events Data</h5>
-                                <p class="card-text">Export click events, scroll data, and user interactions.</p>
+                                <p class="card-text">Export widget interaction events.</p>
                                 <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#eventsExportModal">
                                     <i class="fas fa-download me-1"></i>
                                     Export Events
@@ -83,23 +68,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <span class="badge bg-primary">Analytics</span>
-                                </td>
-                                <td>Example Site</td>
-                                <td>Jan 1 - Jan 31, 2024</td>
-                                <td>CSV</td>
-                                <td>
-                                    <span class="badge bg-success">Completed</span>
-                                </td>
-                                <td>Jan 15, 2024</td>
-                                <td>
-                                    <button class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-download"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <!-- History entries would be listed here -->
                             <!-- Add more export history entries as needed -->
                         </tbody>
                     </table>
@@ -109,60 +78,6 @@
     </div>
 </div>
 
-<!-- Analytics Export Modal -->
-<div class="modal fade" id="analyticsExportModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ route('exports.analytics') }}">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Export Analytics Data</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="analytics_site_id" class="form-label">Select Site</label>
-                        <select class="form-select" id="analytics_site_id" name="site_id" required>
-                            <option value="">Choose a site...</option>
-                            @foreach($sites as $site)
-                                <option value="{{ $site->id }}">{{ $site->name }} ({{ $site->domain }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="analytics_start_date" class="form-label">Start Date</label>
-                                <input type="date" class="form-control" id="analytics_start_date" name="start_date" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="analytics_end_date" class="form-label">End Date</label>
-                                <input type="date" class="form-control" id="analytics_end_date" name="end_date" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="analytics_format" class="form-label">Export Format</label>
-                        <select class="form-select" id="analytics_format" name="format" required>
-                            <option value="csv">CSV</option>
-                            <option value="json">JSON</option>
-                            <option value="xlsx">Excel (XLSX)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-download me-1"></i>
-                        Export Data
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- Reviews Export Modal -->
 <div class="modal fade" id="reviewsExportModal" tabindex="-1">

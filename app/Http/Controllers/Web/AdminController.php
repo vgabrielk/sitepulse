@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Services\ClientService;
 use App\Services\SiteService;
-use App\Services\AnalyticsService;
 use App\Models\Client;
 use App\Models\Site;
 use Illuminate\Http\Request;
@@ -17,7 +16,7 @@ class AdminController extends Controller
     public function __construct(
         private ClientService $clientService,
         private SiteService $siteService,
-        private AnalyticsService $analyticsService
+        
     ) {}
 
     public function dashboard()

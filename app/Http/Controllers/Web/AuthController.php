@@ -120,7 +120,7 @@ class AuthController extends Controller
         }
 
         return redirect()->route('dashboard')
-            ->with('success', 'Conta criada com sucesso! Bem-vindo ao SitePulse Analytics!');
+            ->with('success', 'Conta criada com sucesso! Bem-vindo ao SitePulse Widgets!');
     }
 
     /**

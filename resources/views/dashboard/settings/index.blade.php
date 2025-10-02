@@ -1,6 +1,6 @@
 @extends('dashboard.layout')
 
-@section('title', 'Settings - SitePulse Analytics')
+@section('title', 'Settings - SitePulse Widgets')
 @section('page-title', 'Settings')
 
 @section('content')
@@ -22,7 +22,7 @@
                                id="webhook_url" name="webhook_url" 
                                value="{{ old('webhook_url', $client->webhook_url) }}"
                                placeholder="https://your-domain.com/webhook">
-                        <div class="form-text">Receive real-time notifications about events and analytics data.</div>
+                        <div class="form-text">Receive real-time notifications about widget events and reviews.</div>
                         @error('webhook_url')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -64,7 +64,7 @@
                                 <label class="form-check-label" for="weekly_reports">
                                     Weekly Reports
                                 </label>
-                                <div class="form-text">Receive weekly analytics summaries</div>
+                                <div class="form-text">Receive weekly summaries</div>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                                 <label class="form-check-label" for="monthly_reports">
                                     Monthly Reports
                                 </label>
-                                <div class="form-text">Receive monthly analytics summaries</div>
+                                <div class="form-text">Receive monthly summaries</div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -88,7 +88,7 @@
                                        id="data_retention_days" name="settings[data_retention_days]" 
                                        value="{{ old('settings.data_retention_days', $client->settings['data_retention_days'] ?? 365) }}"
                                        min="30" max="365">
-                                <div class="form-text">How long to keep analytics data (30-365 days)</div>
+                                <div class="form-text">How long to keep data (30-365 days)</div>
                                 @error('settings.data_retention_days')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -165,7 +165,7 @@
                 <h5 class="card-title mb-0">Data Management</h5>
             </div>
             <div class="card-body">
-                <p class="card-text">Export your analytics data or manage data retention settings.</p>
+                <p class="card-text">Export your reviews and manage data retention settings.</p>
                 <div class="d-grid gap-2">
                     <a href="{{ route('exports.index') }}" class="btn btn-outline-info">
                         <i class="fas fa-download me-1"></i>
@@ -185,8 +185,8 @@
 @push('scripts')
 <script>
 function confirmDataReset() {
-    if (confirm('Are you sure you want to reset all analytics data? This action cannot be undone.')) {
-        if (confirm('This will permanently delete all your analytics data. Are you absolutely sure?')) {
+    if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
+        if (confirm('This will permanently delete all your data. Are you absolutely sure?')) {
             // Here you would implement the data reset functionality
             alert('Data reset functionality would be implemented here.');
         }

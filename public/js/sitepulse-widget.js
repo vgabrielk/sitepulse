@@ -1,8 +1,8 @@
 /**
- * SitePulse Analytics Widget
+ * SitePulse Widget
  * Version: 1.0.0
  * 
- * This script provides real-time analytics tracking for websites.
+ * This script provides widget rendering and basic event tracking.
  * It automatically tracks page views, user interactions, and collects feedback.
  */
 
@@ -541,7 +541,7 @@
         // Initialize widget
         widget.init();
         
-        console.log('SitePulse Analytics initialized');
+        console.log('SitePulse Widget initialized');
     }
 
     // Start when DOM is ready
