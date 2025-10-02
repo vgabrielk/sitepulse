@@ -127,16 +127,9 @@ Route::get('/widget/demo/before-after', function () {
     return view('widget.demo.before-after', compact('before', 'after'));
 });
 
-    // Optional demo for reviews using iframe page
-    Route::get('/widget/demo/reviews', function(){
-        // Reuse reviews iframe route if there is at least one site
-        $site = \App\Models\Site::first();
-        if($site){
-            return redirect()->route('widget.reviews', $site->widget_id);
-        }
-        // fallback simple HTML
-        return response('<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;padding:16px;border:1px solid #eee;border-radius:12px;max-width:800px;margin:0 auto;">\n<h3 style="margin:0 0 8px 0;">Reviews (demo)</h3>\n<p style="color:#555;margin:0;">Sem site cadastrado para exibir reviews.</p>\n</div>', 200);
-    });
+Route::get('/widget/demo/reviews', function () {
+    return view('widget.demo.reviews');
+});
 
 // Review iframe route
 Route::get('/widget/{widgetId}/reviews', function ($widgetId) {

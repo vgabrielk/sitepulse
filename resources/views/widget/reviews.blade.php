@@ -22,58 +22,293 @@
         }
         
         .reviews-container {
-            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             width: 100%;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
         
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            margin-top: 20px;
+        .reviews-widget {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 32px;
             width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
+            max-width: 1000px;
+            border: 1px solid #f1f5f9;
+            margin: 0 auto;
         }
         
-        @media (min-width: 768px) {
-            .reviews-grid {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        @media (max-width: 768px) {
+            .reviews-container {
+                max-width: 450px;
+                padding: 16px;
+            }
+            
+            .reviews-widget {
+                max-width: 400px;
+                padding: 24px;
             }
         }
         
         @media (max-width: 480px) {
             .reviews-container {
-                padding: 10px;
+                max-width: 100%;
+                padding: 12px;
             }
             
-            .review-item {
-                padding: 15px;
+            .reviews-widget {
+                max-width: 100%;
+                padding: 20px;
+                margin: 0 8px;
+            }
+        }
+        
+        .reviews-carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .reviews-track {
+            display: flex;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+        
+        .review-slide {
+            min-width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding: 0 8px;
+        }
+        
+        .carousel-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .carousel-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .indicator.active {
+            background: #2563eb;
+            transform: scale(1.2);
+        }
+        
+        /* Desktop carousel improvements */
+        @media (min-width: 768px) {
+            .carousel-controls {
+                margin-top: 24px;
+                padding: 0 16px;
             }
             
-            .review-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+            .carousel-btn {
+                padding: 12px;
+                border-radius: 10px;
             }
             
-            .review-form-toggle {
-                display: block;
-                margin: 0 auto;
-                text-align: center;
+            .carousel-indicators {
+                gap: 10px;
             }
             
+            .indicator {
+                width: 10px;
+                height: 10px;
+            }
+        }
+        
+        /* Review Form Styles */
+        .review-form-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #f1f5f9;
+        }
+        
+        .form-toggle-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+        }
+        
+        .form-toggle-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .review-form {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .review-form.show {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .star-input {
+            display: none;
+        }
+        
+        .star-label {
+            font-size: 20px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .star-label:hover,
+        .star-label.active {
+            color: #fbbf24;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .submit-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .submit-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 8px;
+        }
+        
+        .cancel-btn:hover {
+            background: #4b5563;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        @media (max-width: 480px) {
             .form-row {
-                display: block !important;
+                grid-template-columns: 1fr;
             }
             
-            .form-row .form-group {
-                width: 100% !important;
-                margin-bottom: 16px;
+            .btn-group {
+                flex-direction: column;
             }
+            
+            .cancel-btn {
+                margin-left: 0;
+            }
+        }
+        
             
             .form-control, .form-select {
                 width: 100% !important;
@@ -93,89 +328,163 @@
         
         .reviews-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .reviews-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        /* Desktop header improvements */
+        @media (min-width: 768px) {
+            .reviews-header {
+                margin-bottom: 32px;
+            }
+            
+            .reviews-title {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
         }
         
         .reviews-subtitle {
             font-size: 14px;
-            color: #7f8c8d;
+            color: #64748b;
         }
         
         .reviews-count {
             font-size: 12px;
-            color: #95a5a6;
+            color: #94a3b8;
             margin-top: 5px;
             font-weight: 500;
         }
         
         .review-item {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-left: 4px solid #3498db;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            height: fit-content;
+            margin-bottom: 24px;
             width: 100%;
-            max-width: 100%;
             box-sizing: border-box;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            padding: 20px 0;
+            border-bottom: 1px solid #f1f5f9;
         }
         
-        .review-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        .review-item:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
         }
         
         .review-header {
             display: flex;
-            justify-content: space-between;
+            align-items: start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .reviewer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .reviewer-info {
+            flex: 1;
         }
         
         .reviewer-name {
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
+            color: #0f172a;
+            font-size: 16px;
+            margin-bottom: 2px;
         }
         
         .review-date {
             font-size: 12px;
-            color: #7f8c8d;
+            color: #64748b;
+            margin-bottom: 8px;
         }
         
         .review-rating {
             display: flex;
             gap: 2px;
-            margin-bottom: 8px;
+            margin-bottom: 0;
         }
         
         .star {
-            color: #f39c12;
-            font-size: 14px;
+            color: #fbbf24;
+            font-size: 16px;
         }
         
         .star.empty {
-            color: #ddd;
+            color: #e5e7eb;
         }
         
         .review-comment {
             font-size: 14px;
-            color: #555;
-            line-height: 1.5;
+            color: #475569;
+            line-height: 1.625;
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
             max-width: 100%;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid #2563eb;
+            font-style: italic;
+        }
+        
+        /* Desktop layout improvements */
+        @media (min-width: 768px) {
+            .review-item {
+                padding: 32px 0;
+            }
+            
+            .review-header {
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .reviewer-avatar {
+                width: 64px;
+                height: 64px;
+                font-size: 24px;
+            }
+            
+            .reviewer-name {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+            
+            .review-date {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+            
+            .star {
+                font-size: 20px;
+                gap: 3px;
+            }
+            
+            .review-comment {
+                font-size: 18px;
+                line-height: 1.7;
+                padding: 20px;
+                border-radius: 12px;
+                margin-top: 4px;
+            }
         }
         
         .no-reviews {
@@ -201,19 +510,19 @@
         
         .powered-by {
             text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #ecf0f1;
+            margin-top: 24px;
+            padding-top: 16px;
         }
         
         .powered-by-text {
             font-size: 12px;
-            color: #95a5a6;
+            color: #94a3b8;
         }
         
         .powered-by-link {
-            color: #3498db;
+            color: #2563eb;
             text-decoration: none;
+            font-weight: 500;
         }
         
         .powered-by-link:hover {
@@ -376,266 +685,243 @@
 </head>
 <body>
     <div class="reviews-container">
+        <div class="reviews-widget">
         <div class="reviews-header">
-            <div class="reviews-title">Customer Feedbacks</div>
-            <div class="reviews-subtitle">{{ $site->name }}</div>
+            <div class="reviews-title">O que dizem nossos clientes</div>
             @if($reviews->count() > 0)
-                <div class="reviews-count">{{ $reviews->count() }} {{ $reviews->count() === 1 ? 'review' : 'reviews' }}</div>
+                <div class="reviews-count">{{ $reviews->count() }} {{ $reviews->count() === 1 ? 'avaliação' : 'avaliações' }}</div>
             @endif
         </div>
         
-        <!-- Review Form Toggle -->
-        <div class="review-form-container">
-            <button class="review-form-toggle" onclick="toggleReviewForm()">
-                <span>⭐</span>
-                Write a Review
+        @if($reviews->count() > 0)
+            <div class="reviews-carousel">
+                <div class="reviews-track" id="reviewsTrack">
+                    @foreach($reviews as $review)
+                        <div class="review-slide">
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-avatar">
+                                        {{ strtoupper(substr($review->visitor_name ?: 'A', 0, 1)) }}
+                                    </div>
+                                    <div class="reviewer-info">
+                                        <div class="reviewer-name">{{ $review->visitor_name ?: 'Anônimo' }}</div>
+                                        <div class="review-date">{{ $review->submitted_at->format('d/m/Y') }}</div>
+                                        <div class="review-rating">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span class="star {{ $i <= $review->rating ? '' : 'empty' }}">★</span>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                @if($review->comment)
+                                    <div class="review-comment">"{{ $review->comment }}"</div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                
+                @if($reviews->count() > 1)
+                    <div class="carousel-controls">
+                        <button class="carousel-btn" id="prevBtn" onclick="previousReview()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="carousel-indicators" id="indicators">
+                            @for($i = 0; $i < $reviews->count(); $i++)
+                                <div class="indicator {{ $i === 0 ? 'active' : '' }}" onclick="goToReview({{ $i }})"></div>
+                            @endfor
+                        </div>
+                        
+                        <button class="carousel-btn" id="nextBtn" onclick="nextReview()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                @endif
+            </div>
+        @else
+            <div class="no-reviews">
+                <div class="no-reviews-icon">⭐</div>
+                <div class="no-reviews-text">Nenhuma avaliação ainda</div>
+                <div class="no-reviews-subtext">Seja o primeiro a compartilhar sua experiência!</div>
+            </div>
+        @endif
+        
+        <!-- Review Form Section -->
+        <div class="review-form-section">
+            <button class="form-toggle-btn" onclick="toggleReviewForm()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+                Deixar Avaliação
             </button>
             
-            <!-- Review Form -->
             <div class="review-form" id="reviewForm">
-                <form id="reviewFormElement" method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}">
+                <form method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}">
                     @csrf
-                    
-                    @if(session('success'))
-                        <div class="alert alert-success" id="inline-success" role="status">
-                            {{ session('success') }}
-                        </div>
-                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('success', @json(session('success'))); }catch(e){} });</script>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="alert alert-danger" id="inline-error" role="status">
-                            {{ session('error') }}
-                        </div>
-                        <script>document.addEventListener('DOMContentLoaded',()=>{ try{ parent.showToast && parent.showToast('error', @json(session('error'))); }catch(e){} });</script>
-                    @endif
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label" for="visitor_name">Your Name *</label>
-                            <input type="text" 
-                                   class="form-control @error('visitor_name') is-invalid @enderror" 
-                                   id="visitor_name" 
-                                   name="visitor_name" 
-                                   value="{{ old('visitor_name') }}" 
-                                   placeholder="Enter your name"
-                                   required>
-                            @error('visitor_name')
-                                <div class="text-danger" style="font-size: 12px; margin-top: 4px;">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="visitor_name">Seu Nome *</label>
+                            <input type="text" class="form-control" id="visitor_name" name="visitor_name" placeholder="Digite seu nome" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="visitor_email">Email Address *</label>
-                            <input type="email" 
-                                   class="form-control @error('visitor_email') is-invalid @enderror" 
-                                   id="visitor_email" 
-                                   name="visitor_email" 
-                                   value="{{ old('visitor_email') }}" 
-                                   placeholder="your@email.com"
-                                   required>
-                            @error('visitor_email')
-                                <div class="text-danger" style="font-size: 12px; margin-top: 4px;">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="visitor_email">Email *</label>
+                            <input type="email" class="form-control" id="visitor_email" name="visitor_email" placeholder="seu@email.com" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Your Rating *</label>
+                        <label class="form-label">Sua Avaliação *</label>
                         <div class="star-rating">
-                            <input type="radio" name="rating" value="1" id="star1" class="star-input" {{ old('rating') == '1' ? 'checked' : '' }}>
-                            <label for="star1" class="star-label">★</label>
-                            
-                            <input type="radio" name="rating" value="2" id="star2" class="star-input" {{ old('rating') == '2' ? 'checked' : '' }}>
-                            <label for="star2" class="star-label">★</label>
-                            
-                            <input type="radio" name="rating" value="3" id="star3" class="star-input" {{ old('rating') == '3' ? 'checked' : '' }}>
-                            <label for="star3" class="star-label">★</label>
-                            
-                            <input type="radio" name="rating" value="4" id="star4" class="star-input" {{ old('rating') == '4' ? 'checked' : '' }}>
-                            <label for="star4" class="star-label">★</label>
-                            
-                            <input type="radio" name="rating" value="5" id="star5" class="star-input" {{ old('rating') == '5' ? 'checked' : '' }}>
-                            <label for="star5" class="star-label">★</label>
+                            @for($i = 1; $i <= 5; $i++)
+                                <input type="radio" name="rating" value="{{ $i }}" id="star{{ $i }}" class="star-input" required>
+                                <label for="star{{ $i }}" class="star-label">★</label>
+                            @endfor
                         </div>
-                        @error('rating')
-                            <div class="text-danger" style="font-size: 12px; margin-top: 4px;">{{ $message }}</div>
-                        @enderror
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label" for="comment">Your Review</label>
-                        <textarea class="form-control @error('comment') is-invalid @enderror" 
-                                  id="comment" 
-                                  name="comment" 
-                                  rows="4" 
-                                  placeholder="Share your experience...">{{ old('comment') }}</textarea>
-                        @error('comment')
-                            <div class="text-danger" style="font-size: 12px; margin-top: 4px;">{{ $message }}</div>
-                        @enderror
+                        <label class="form-label" for="comment">Seu Comentário</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Compartilhe sua experiência..."></textarea>
                     </div>
                     
                     <div class="btn-group">
-                        <button type="submit" class="submit-btn">
-                            Submit Review
-                        </button>
-                        <button type="button" class="cancel-btn" onclick="toggleReviewForm()">
-                            Cancel
-                        </button>
+                        <button type="submit" class="submit-btn">Enviar Avaliação</button>
+                        <button type="button" class="cancel-btn" onclick="toggleReviewForm()">Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
         
-        @if($reviews->count() > 0)
-            <div class="reviews-grid">
-                @foreach($reviews as $review)
-                    <div class="review-item">
-                        <div class="review-header">
-                            <div class="reviewer-name">{{ $review->visitor_name ?: 'Anonymous' }}</div>
-                            <div class="review-date">{{ $review->submitted_at->format('M d, Y') }}</div>
-                        </div>
-                        
-                        <div class="review-rating">
-                            @for($i = 1; $i <= 5; $i++)
-                                <span class="star {{ $i <= $review->rating ? '' : 'empty' }}">★</span>
-                            @endfor
-                        </div>
-                        
-                        @if($review->comment)
-                            <div class="review-comment">{{ $review->comment }}</div>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div class="no-reviews">
-                <div class="no-reviews-icon">⭐</div>
-                <div class="no-reviews-text">No reviews yet</div>
-                <div class="no-reviews-subtext">Be the first to share your experience!</div>
-            </div>
-        @endif
-        
-        <div class="powered-by">
-            <div class="powered-by-text">
-                Powered by <a href="https://sitepulse.com" class="powered-by-link" target="_blank">SitePulse</a>
+            <div class="powered-by">
+                <div class="powered-by-text">
+                    Powered by <a href="https://sitepulse.com" class="powered-by-link" target="_blank">SitePulse</a>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
+        // Carousel functionality
+        let currentReviewIndex = 0;
+        const totalReviews = {{ $reviews->count() }};
+        
+        function updateCarousel() {
+            const track = document.getElementById('reviewsTrack');
+            const indicators = document.querySelectorAll('.indicator');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (track) {
+                track.style.transform = `translateX(-${currentReviewIndex * 100}%)`;
+            }
+            
+            // Update indicators
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentReviewIndex);
+            });
+            
+            // Update button states
+            if (prevBtn) prevBtn.disabled = currentReviewIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentReviewIndex === totalReviews - 1;
+        }
+        
+        function nextReview() {
+            if (currentReviewIndex < totalReviews - 1) {
+                currentReviewIndex++;
+                updateCarousel();
+            }
+        }
+        
+        function previousReview() {
+            if (currentReviewIndex > 0) {
+                currentReviewIndex--;
+                updateCarousel();
+            }
+        }
+        
+        function goToReview(index) {
+            currentReviewIndex = index;
+            updateCarousel();
+        }
+        
+        // Review form functionality
         function toggleReviewForm() {
             const form = document.getElementById('reviewForm');
-            const toggle = document.querySelector('.review-form-toggle');
+            const btn = document.querySelector('.form-toggle-btn');
             
             if (form.classList.contains('show')) {
                 form.classList.remove('show');
-                toggle.innerHTML = '<span>⭐</span> Write a Review';
+                btn.innerHTML = `
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                    Deixar Avaliação
+                `;
             } else {
                 form.classList.add('show');
-                toggle.innerHTML = '<span>✖</span> Cancel';
+                btn.innerHTML = `
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Fechar Formulário
+                `;
             }
         }
         
         // Star rating functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const starInputs = document.querySelectorAll('.star-input');
             const starLabels = document.querySelectorAll('.star-label');
+            const starInputs = document.querySelectorAll('.star-input');
             
             starLabels.forEach((label, index) => {
-                label.addEventListener('click', function() {
-                    const rating = index + 1;
-                    const input = document.getElementById('star' + rating);
-                    input.checked = true;
-                    updateStarDisplay(rating);
-                });
-                
                 label.addEventListener('mouseenter', function() {
-                    const rating = index + 1;
-                    updateStarDisplay(rating);
-                });
-            });
-            
-            document.querySelector('.star-rating').addEventListener('mouseleave', function() {
-                const checkedInput = document.querySelector('.star-input:checked');
-                if (checkedInput) {
-                    const rating = parseInt(checkedInput.value);
-                    updateStarDisplay(rating);
-                } else {
-                    updateStarDisplay(0);
-                }
-            });
-            
-            function updateStarDisplay(rating) {
-                starLabels.forEach((label, index) => {
-                    if (index < rating) {
-                        label.classList.add('active');
-                    } else {
-                        label.classList.remove('active');
-                    }
-                });
-            }
-            
-            // Form submission with AJAX
-            const form = document.getElementById('reviewFormElement');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const formData = new FormData(form);
-                    const submitBtn = form.querySelector('.submit-btn');
-                    const originalText = submitBtn.innerHTML;
-                    
-                    // Show loading state
-                    submitBtn.innerHTML = 'Submitting...';
-                    submitBtn.disabled = true;
-                    
-                    fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Show success message
-                            showMessage(data.message, 'success');
-                            form.reset();
-                            updateStarDisplay(0);
-                            toggleReviewForm(); // Close form
-                        } else {
-                            showMessage(data.message, 'error');
-                        }
-                    })
-                    .catch(error => {
-                        showMessage('Failed to submit review. Please try again.', 'error');
-                    })
-                    .finally(() => {
-                        // Reset button
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
+                    // Highlight stars up to this one
+                    starLabels.forEach((star, i) => {
+                        star.classList.toggle('active', i <= index);
                     });
                 });
+                
+                label.addEventListener('mouseleave', function() {
+                    // Reset to selected rating
+                    const selectedRating = document.querySelector('.star-input:checked');
+                    const selectedIndex = selectedRating ? parseInt(selectedRating.value) - 1 : -1;
+                    
+                    starLabels.forEach((star, i) => {
+                        star.classList.toggle('active', i <= selectedIndex);
+                    });
+                });
+                
+                label.addEventListener('click', function() {
+                    starInputs[index].checked = true;
+                    
+                    // Update visual state
+                    starLabels.forEach((star, i) => {
+                        star.classList.toggle('active', i <= index);
+                    });
+                });
+            });
+            
+            // Initialize carousel
+            if (totalReviews > 0) {
+                updateCarousel();
             }
             
-            function showMessage(message, type) {
-                // Remove existing messages
-                const existingAlerts = document.querySelectorAll('.alert');
-                existingAlerts.forEach(alert => alert.remove());
-                
-                // Create new message
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type}`;
-                alertDiv.innerHTML = message;
-                
-                // Insert at the top of the form
-                const form = document.getElementById('reviewFormElement');
-                form.insertBefore(alertDiv, form.firstChild);
-                
-                // Auto-hide after 5 seconds
-                setTimeout(() => {
-                    alertDiv.remove();
+            // Auto-advance carousel every 5 seconds (optional)
+            if (totalReviews > 1) {
+                setInterval(function() {
+                    if (currentReviewIndex < totalReviews - 1) {
+                        nextReview();
+                    } else {
+                        currentReviewIndex = 0;
+                        updateCarousel();
+                    }
                 }, 5000);
             }
         });

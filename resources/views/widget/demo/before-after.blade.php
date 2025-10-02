@@ -3,9 +3,9 @@
 @section('title', 'Widget - Antes & Depois')
 
 @section('content')
-<section class="relative p-4 w-full h-full">
+<section class="relative w-full h-full">
     <div class="relative max-w-5xl mx-auto h-full">
-        <div class="bg-card rounded-2xl shadow-xl p-6 border border-border h-full">
+        <div class="bg-card rounded-2xl shadow-xl p-6  h-full">
             <div class="relative h-full rounded-xl overflow-hidden bg-muted">
                 <img src="https://s2.glbimg.com/03-R_F2xgE1FwPTkmL4Tvle6HUE=/e.glbimg.com/og/ed/f/original/2019/11/06/jojo.png" alt="Antes" class="absolute inset-0 w-full h-full object-cover">
                 <img id="afterImage" src="https://robertajungmann.com.br/wp-content/uploads/2025/02/Destaque-Site-2-5.jpg" alt="Depois" class="absolute inset-0 w-full h-full object-cover" style="clip-path: inset(0 50% 0 0)">
