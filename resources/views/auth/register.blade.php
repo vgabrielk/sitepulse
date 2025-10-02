@@ -85,10 +85,7 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <input id="terms" name="terms" type="checkbox" required class="sr-only peer">
-                <div class="w-11 h-6 bg-input peer-checked:bg-primary rounded-full peer relative transition-colors">
-                    <div class="absolute top-0.5 left-0.5 bg-card w-5 h-5 rounded-full transition-transform peer-checked:translate-x-5"></div>
-                </div>
+                <input id="terms" name="terms" type="checkbox" required class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2">
                 <label for="terms" class="text-sm">
                     Eu aceito os 
                     <a href="#" class="text-primary hover:underline">termos de uso</a> 

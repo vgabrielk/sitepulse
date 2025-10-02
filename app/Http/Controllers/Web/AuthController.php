@@ -80,6 +80,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'company' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
+            'terms' => 'required|accepted',
         ]);
 
         // Use database transaction to ensure both User and Client are created
