@@ -40,8 +40,13 @@ class SiteController extends Controller
         // Get sites with only necessary fields and counts to avoid N+1 queries
         $sites = $client->sites()
             ->select(['id', 'name', 'domain', 'widget_id', 'is_active', 'created_at', 'updated_at'])
-            ->withCount(['sessions', 'visits', 'events'])
+            ->withCount(['sessions', 'visits'])
             ->paginate(12);
+        
+        // Add events count manually for each site
+        foreach ($sites as $site) {
+            $site->events_count = $site->events()->count();
+        }
         
         \Log::info('SiteController@index - Sites count: ' . $sites->count());
         

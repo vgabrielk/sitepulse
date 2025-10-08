@@ -63,7 +63,7 @@ class Site extends Model
     }
 
     /**
-     * Get all events for this site (through sessions)
+     * Get all events for this site (through sessions and visits)
      */
     public function events()
     {
