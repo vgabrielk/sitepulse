@@ -8,7 +8,7 @@
     <x-ui.card>
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-xs font-semibold text-primary uppercase mb-1">Total Sites</div>
+                <div class="text-xs font-semibold text-primary uppercase mb-1">Total de Sites</div>
                 <div class="text-2xl font-bold">{{ $stats['sites_count'] ?? 0 }}</div>
             </div>
             <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
@@ -19,7 +19,7 @@
     <x-ui.card>
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-xs font-semibold text-success uppercase mb-1">Total Sessions</div>
+                <div class="text-xs font-semibold text-success uppercase mb-1">Total de Sessões</div>
                 <div class="text-2xl font-bold">{{ $stats['total_sessions'] ?? 0 }}</div>
             </div>
             <div class="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
@@ -30,7 +30,7 @@
     <x-ui.card>
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-xs font-semibold text-primary uppercase mb-1">Total Visits</div>
+                <div class="text-xs font-semibold text-primary uppercase mb-1">Total de Visitas</div>
                 <div class="text-2xl font-bold">{{ $stats['total_visits'] ?? 0 }}</div>
             </div>
             <div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
@@ -41,7 +41,7 @@
     <x-ui.card>
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-xs font-semibold text-warning uppercase mb-1">Total Reviews</div>
+                <div class="text-xs font-semibold text-warning uppercase mb-1">Total de Reviews</div>
                 <div class="text-2xl font-bold">{{ $stats['total_reviews'] ?? 0 }}</div>
             </div>
             <div class="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
@@ -54,18 +54,18 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <x-ui.card>
         <div class="flex items-center justify-between mb-4">
-            <h6 class="text-sm font-semibold text-primary">Recent Sites</h6>
-            <x-ui.button href="{{ route('sites.index') }}" size="sm">View All</x-ui.button>
+            <h6 class="text-sm font-semibold text-primary">Sites Recentes</h6>
+            <x-ui.button href="{{ route('sites.index') }}" size="sm">Ver Todos</x-ui.button>
         </div>
         @if(isset($recentSites) && count($recentSites) > 0)
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-muted">
                         <tr>
-                            <th class="px-4 py-2 text-left">Name</th>
-                            <th class="px-4 py-2 text-left">Domain</th>
+                            <th class="px-4 py-2 text-left">Nome</th>
+                            <th class="px-4 py-2 text-left">Domínio</th>
                             <th class="px-4 py-2 text-left">Status</th>
-                            <th class="px-4 py-2 text-left">Actions</th>
+                            <th class="px-4 py-2 text-left">Ações</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-border">
@@ -75,13 +75,13 @@
                             <td class="px-4 py-2">{{ $site->domain }}</td>
                             <td class="px-4 py-2">
                                 @if($site->is_active)
-                                    <x-ui.badge variant="success">Active</x-ui.badge>
+                                    <x-ui.badge variant="success">Ativo</x-ui.badge>
                                 @else
-                                    <x-ui.badge variant="muted">Inactive</x-ui.badge>
+                                    <x-ui.badge variant="muted">Inativo</x-ui.badge>
                                 @endif
                             </td>
                             <td class="px-4 py-2">
-                                <x-ui.button variant="outline" size="sm" href="{{ route('sites.show', $site->id) }}">View</x-ui.button>
+                                <x-ui.button variant="outline" size="sm" href="{{ route('sites.show', $site->id) }}">Ver</x-ui.button>
                             </td>
                         </tr>
                         @endforeach
@@ -89,14 +89,14 @@
                 </table>
             </div>
         @else
-            <p class="text-muted-foreground">No sites found. <a class="text-primary underline" href="{{ route('sites.create') }}">Create your first site</a></p>
+            <p class="text-muted-foreground">Nenhum site encontrado. <a class="text-primary underline" href="{{ route('sites.create') }}">Crie seu primeiro site</a></p>
         @endif
     </x-ui.card>
 
     <x-ui.card>
         <div class="flex items-center justify-between mb-4">
-            <h6 class="text-sm font-semibold text-primary">Recent Reviews</h6>
-            <x-ui.button href="{{ route('reviews.index') }}" size="sm">View All</x-ui.button>
+            <h6 class="text-sm font-semibold text-primary">Reviews Recentes</h6>
+            <x-ui.button href="{{ route('reviews.index') }}" size="sm">Ver Todas</x-ui.button>
         </div>
         @if(isset($recentReviews) && count($recentReviews) > 0)
             <div class="space-y-4">
@@ -107,7 +107,7 @@
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
-                            <h6 class="font-medium">{{ $review['visitor_name'] ?? 'Anonymous' }}</h6>
+                            <h6 class="font-medium">{{ $review['visitor_name'] ?? 'Anônimo' }}</h6>
                             <small class="text-muted-foreground">{{ \Carbon\Carbon::parse($review['submitted_at'])->diffForHumans() }}</small>
                         </div>
                         <div class="flex items-center">
@@ -123,21 +123,21 @@
                 @endforeach
             </div>
         @else
-            <p class="text-muted-foreground">No reviews yet.</p>
+            <p class="text-muted-foreground">Nenhuma review ainda.</p>
         @endif
     </x-ui.card>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <x-ui.card>
-        <h6 class="text-sm font-semibold text-primary mb-4">Quick Actions</h6>
+        <h6 class="text-sm font-semibold text-primary mb-4">Ações Rápidas</h6>
         <div class="grid gap-2">
-            <x-ui.button href="{{ route('sites.create') }}">Add New Site</x-ui.button>
+            <x-ui.button href="{{ route('sites.create') }}">Adicionar Novo Site</x-ui.button>
             <x-ui.button href="{{ route('reviews.index') }}" variant="outline">
-                Manage Reviews
+                Gerenciar Reviews
             </x-ui.button>
             <x-ui.button href="{{ route('exports.index') }}" variant="outline">
-                Export Data
+                Exportar Dados
             </x-ui.button>
         </div>
     </x-ui.card>

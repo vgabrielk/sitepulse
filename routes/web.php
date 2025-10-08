@@ -10,6 +10,9 @@ use App\Http\Controllers\Web\SettingsController;
 use App\Http\Controllers\Web\BillingController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\FaqController;
+use App\Http\Controllers\Web\AdminController;
+use App\Http\Controllers\Web\AdminClientController;
+use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -28,12 +31,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
+
+
+
+
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Email verification routes
+Route::get('/email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->name('verification.send');
 
 // Password reset routes
 Route::get('/password/reset', [AuthController::class, 'showPasswordReset'])->name('password.request');
@@ -42,7 +56,7 @@ Route::get('/password/reset/{token}', [AuthController::class, 'showPasswordReset
 Route::post('/password/reset', [AuthController::class, 'passwordResetUpdate'])->name('password.update');
 
 // Protected routes
-Route::middleware(['auth:web'])->group(function () {
+Route::middleware(['auth:web', 'email.verified'])->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -210,18 +224,27 @@ Route::post('/widget/{widgetId}/submit-review', function ($widgetId, \Illuminate
         return response('Site not found or inactive', 404);
     }
 
-    $request->validate([
+    $validator = \Validator::make($request->all(), [
         'visitor_name' => 'required|string|max:255',
         'visitor_email' => 'required|email|max:255',
         'rating' => 'required|numeric|min:1|max:5',
         'comment' => 'nullable|string|max:1000',
     ]);
 
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Por favor, corrija os erros abaixo:',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
     try {
         $data = $request->only(['visitor_name', 'visitor_email', 'rating', 'comment']);
         $data['ip_address'] = $request->ip();
         $data['submitted_at'] = now();
-        $data['status'] = 'pending';
+        $data['status'] = 'approved'; // Auto-approve reviews
+        $data['approved_at'] = now(); // Set approval timestamp
         
         $review = \App\Models\Review::create([
             'site_id' => $site->id,
@@ -232,6 +255,7 @@ Route::post('/widget/{widgetId}/submit-review', function ($widgetId, \Illuminate
             'ip_address' => $data['ip_address'],
             'submitted_at' => $data['submitted_at'],
             'status' => $data['status'],
+            'approved_at' => $data['approved_at'],
         ]);
         
         \Log::info('Review created successfully', ['review_id' => $review->id, 'site_id' => $site->id]);
@@ -250,3 +274,62 @@ Route::post('/widget/{widgetId}/submit-review', function ($widgetId, \Illuminate
         ], 500);
     }
 })->name('widget.submit-review.post');
+
+// Admin routes
+Route::middleware(['auth:web', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Admin dashboard
+    Route::middleware(['permission:admin.dashboard'])->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    });
+
+    // Client management routes with specific permissions
+    Route::middleware(['permission:clients.view'])->group(function () {
+        Route::get('/clients', [AdminClientController::class, 'index'])->name('clients.index');
+        Route::get('/clients/{client}', [AdminClientController::class, 'show'])->name('clients.show');
+    });
+
+    // Sites (admin) - placeholder redirect until admin listing is implemented
+    Route::middleware(['permission:sites.view_all'])->group(function () {
+        Route::get('/sites', function () {
+            return redirect()->route('admin.dashboard');
+        })->name('sites.index');
+    });
+    
+    Route::middleware(['permission:clients.create'])->group(function () {
+        Route::get('/clients/create', [AdminClientController::class, 'create'])->name('clients.create');
+        Route::post('/clients', [AdminClientController::class, 'store'])->name('clients.store');
+    });
+    
+    Route::middleware(['permission:clients.edit'])->group(function () {
+        Route::get('/clients/{client}/edit', [AdminClientController::class, 'edit'])->name('clients.edit');
+        Route::put('/clients/{client}', [AdminClientController::class, 'update'])->name('clients.update');
+        Route::post('/clients/{client}/toggle-status', [AdminClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+        Route::post('/clients/{client}/update-plan', [AdminClientController::class, 'updatePlan'])->name('clients.update-plan');
+        Route::post('/clients/{client}/regenerate-api-key', [AdminClientController::class, 'regenerateApiKey'])->name('clients.regenerate-api-key');
+        Route::post('/clients/{client}/reset-password', [AdminClientController::class, 'resetPassword'])->name('clients.reset-password');
+    });
+    
+    Route::middleware(['permission:clients.delete'])->group(function () {
+        Route::delete('/clients/{client}', [AdminClientController::class, 'destroy'])->name('clients.destroy');
+    });
+    
+    Route::middleware(['permission:clients.manage'])->group(function () {
+        // Bulk actions
+        Route::post('/clients/bulk-action', [AdminClientController::class, 'bulkAction'])->name('clients.bulk-action');
+        Route::get('/clients/export', [AdminClientController::class, 'export'])->name('clients.export');
+    });
+
+    // Reviews (admin) - placeholder redirect until admin moderation is implemented
+    Route::middleware(['permission:reviews.moderate'])->group(function () {
+        Route::get('/reviews', function () {
+            return redirect()->route('admin.dashboard');
+        })->name('reviews.index');
+    });
+
+    // System settings - placeholder redirect until settings page is implemented
+    Route::middleware(['permission:system.settings'])->group(function () {
+        Route::get('/settings', function () {
+            return redirect()->route('admin.dashboard');
+        })->name('settings');
+    });
+});

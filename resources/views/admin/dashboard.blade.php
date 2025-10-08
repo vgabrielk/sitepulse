@@ -4,336 +4,188 @@
 @section('page-title', 'Admin Dashboard')
 
 @section('content')
-<div class="row">
-    <!-- System Stats -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Clients
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_clients'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-users fa-2x text-gray-300"></i>
-                    </div>
+<div class="space-y-6">
+    <!-- System Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Clients -->
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Total Clientes</p>
+                    <p class="text-3xl font-bold text-foreground">{{ $stats['total_clients'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-5.523-4.477-10-10-10S-3 12.477-3 18v2m20 0H3m16 0v-2a3 3 0 00-3-3H7a3 3 0 00-3 3v2m16 0v-2a3 3 0 00-3-3H7a3 3 0 00-3 3v2"/>
+                    </svg>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-ui.card>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Total Sites
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_sites'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-globe fa-2x text-gray-300"></i>
-                    </div>
+        <!-- Total Sites -->
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Total de Sites</p>
+                    <p class="text-3xl font-bold text-foreground">{{ $stats['total_sites'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"/>
+                    </svg>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-ui.card>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Total Sessions
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_sessions'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-eye fa-2x text-gray-300"></i>
-                    </div>
+        <!-- Total Sessions -->
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Total de Sessões</p>
+                    <p class="text-3xl font-bold text-foreground">{{ number_format($stats['total_sessions'] ?? 0) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-warning/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-ui.card>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Total Events
-                        </div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total_events'] ?? 0 }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
-                    </div>
+        <!-- Total Events -->
+        <x-ui.card>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Total de Eventos</p>
+                    <p class="text-3xl font-bold text-foreground">{{ number_format($stats['total_events'] ?? 0) }}</p>
+                </div>
+                <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Revenue Overview -->
-    <div class="col-lg-8 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">System Overview (Last 30 Days)</h6>
-            </div>
-            <div class="card-body">
-                <canvas id="systemChart" width="400" height="200"></canvas>
-            </div>
-        </div>
+        </x-ui.card>
     </div>
 
-    <!-- Plan Distribution -->
-    <div class="col-lg-4 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Client Plans</h6>
-            </div>
-            <div class="card-body">
-                <canvas id="planChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Recent Clients -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Recent Clients</h6>
-                <a href="{{ route('admin.clients.index') }}" class="btn btn-sm btn-primary">View All</a>
-            </div>
-            <div class="card-body">
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Clients -->
+        <div class="lg:col-span-2">
+            <x-ui.card title="Clientes Recentes" :actions="'<a href=\''.route('admin.clients.index').'\' class=\'text-sm text-primary hover:text-primary/80 font-medium\'>Ver todos</a>'">
                 @if(isset($recentClients) && count($recentClients) > 0)
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Plan</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($recentClients as $client)
-                                <tr>
-                                    <td>{{ $client['name'] }}</td>
-                                    <td>{{ $client['email'] }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $client['plan'] === 'enterprise' ? 'dark' : ($client['plan'] === 'premium' ? 'warning' : ($client['plan'] === 'basic' ? 'info' : 'secondary')) }}">
-                                            {{ ucfirst($client['plan']) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if($client['is_active'])
-                                            <span class="badge bg-success">Active</span>
-                                        @else
-                                            <span class="badge bg-secondary">Inactive</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ \Carbon\Carbon::parse($client['created_at'])->diffForHumans() }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="space-y-4">
+                        @foreach($recentClients as $client)
+                            <div class="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-semibold text-primary">{{ substr($client['name'], 0, 1) }}</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">{{ $client['name'] }}</p>
+                                        <p class="text-sm text-muted-foreground">{{ $client['email'] }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <x-ui.badge variant="{{ $client['plan'] === 'enterprise' ? 'primary' : ($client['plan'] === 'premium' ? 'success' : ($client['plan'] === 'basic' ? 'warning' : 'muted')) }}">
+                                        {{ ucfirst($client['plan']) }}
+                                    </x-ui.badge>
+                                    <x-ui.badge variant="{{ $client['is_active'] ? 'success' : 'destructive' }}">
+                                        {{ $client['is_active'] ? 'Ativo' : 'Inativo' }}
+                                    </x-ui.badge>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @else
-                    <p class="text-muted">No clients found.</p>
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-5.523-4.477-10-10-10S-3 12.477-3 18v2m20 0H3m16 0v-2a3 3 0 00-3-3H7a3 3 0 00-3 3v2m16 0v-2a3 3 0 00-3-3H7a3 3 0 00-3 3v2"/>
+                        </svg>
+                        <p class="text-muted-foreground">Nenhum cliente encontrado</p>
+                    </div>
                 @endif
-            </div>
+            </x-ui.card>
         </div>
-    </div>
 
-    <!-- System Status -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">System Status</h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['database'] ? 'active' : 'error' }}"></div>
-                            <span>Database</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['redis'] ? 'active' : 'error' }}"></div>
-                            <span>Redis Cache</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['queue'] ? 'active' : 'error' }}"></div>
-                            <span>Queue Workers</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['storage'] ? 'active' : 'error' }}"></div>
-                            <span>File Storage</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['mail'] ? 'active' : 'error' }}"></div>
-                            <span>Mail Service</span>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="status-indicator {{ $systemStatus['api'] ? 'active' : 'error' }}"></div>
-                            <span>API Service</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Top Sites by Traffic -->
-    <div class="col-lg-8 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Top Sites by Traffic</h6>
-            </div>
-            <div class="card-body">
-                @if(isset($topSites) && count($topSites) > 0)
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Site</th>
-                                    <th>Client</th>
-                                    <th>Sessions</th>
-                                    <th>Visits</th>
-                                    <th>Events</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($topSites as $site)
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <strong>{{ $site['name'] }}</strong><br>
-                                            <small class="text-muted">{{ $site['domain'] }}</small>
-                                        </div>
-                                    </td>
-                                    <td>{{ $site['client_name'] }}</td>
-                                    <td>{{ number_format($site['sessions_count']) }}</td>
-                                    <td>{{ number_format($site['visits_count']) }}</td>
-                                    <td>{{ number_format($site['events_count']) }}</td>
-                                    <td>
-                                        @if($site['is_active'])
-                                            <span class="badge bg-success">Active</span>
-                                        @else
-                                            <span class="badge bg-secondary">Inactive</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <p class="text-muted">No data available.</p>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="col-lg-4 mb-4">
-        <div class="card shadow">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ route('admin.clients.create') }}" class="btn btn-primary">
-                        <i class="fas fa-user-plus me-2"></i>Add New Client
-                    </a>
+        <!-- Quick Actions -->
+        <div class="space-y-6">
+            <!-- Quick Actions Card -->
+            <x-ui.card title="Ações Rápidas">
+                <div class="space-y-3">
+                    <x-ui.button href="{{ route('admin.clients.create') }}" variant="primary" class="w-full">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Novo Cliente
+                    </x-ui.button>
                     
-                    <a href="{{ route('admin.system.logs') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-file-alt me-2"></i>View Logs
-                    </a>
-                    <a href="{{ route('admin.system.settings') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-cog me-2"></i>System Settings
-                    </a>
+                    <x-ui.button href="{{ route('admin.settings') }}" variant="outline" class="w-full">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Configurações
+                    </x-ui.button>
                 </div>
-            </div>
+            </x-ui.card>
+
+            <!-- System Status -->
+            @if(isset($systemStatus))
+                <x-ui.card title="Status do Sistema">
+                    <div class="space-y-3">
+                        @foreach($systemStatus as $service => $status)
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium capitalize">{{ ucfirst($service) }}</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 rounded-full {{ $status ? 'bg-success' : 'bg-destructive' }}"></div>
+                                    <span class="text-xs {{ $status ? 'text-success' : 'text-destructive' }}">
+                                        {{ $status ? 'Online' : 'Offline' }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-ui.card>
+            @endif
         </div>
     </div>
+
+    <!-- Charts Section -->
+    @if(isset($chartData) && isset($planData))
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Activity Chart -->
+            <x-ui.card title="Atividade dos Últimos 30 Dias">
+                <div class="h-64 flex items-center justify-center">
+                    <div class="text-center">
+                        <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <p class="text-muted-foreground">Gráfico de atividade será implementado em breve</p>
+                    </div>
+                </div>
+            </x-ui.card>
+
+            <!-- Plan Distribution -->
+            <x-ui.card title="Distribuição de Planos">
+                <div class="h-64 flex items-center justify-center">
+                    <div class="text-center">
+                        <svg class="w-16 h-16 text-muted-foreground mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                        </svg>
+                        <p class="text-muted-foreground">Gráfico de distribuição será implementado em breve</p>
+                    </div>
+                </div>
+            </x-ui.card>
+        </div>
+    @endif
 </div>
 @endsection
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // System Overview Chart
-    const systemCtx = document.getElementById('systemChart').getContext('2d');
-    new Chart(systemCtx, {
-        type: 'line',
-        data: {
-            labels: {!! json_encode($chartData['labels'] ?? []) !!},
-            datasets: [{
-                label: 'Sessions',
-                data: {!! json_encode($chartData['sessions'] ?? []) !!},
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.1
-            }, {
-                label: 'Events',
-                data: {!! json_encode($chartData['events'] ?? []) !!},
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Plan Distribution Chart
-    const planCtx = document.getElementById('planChart').getContext('2d');
-    new Chart(planCtx, {
-        type: 'doughnut',
-        data: {
-            labels: {!! json_encode($planData['labels'] ?? []) !!},
-            datasets: [{
-                data: {!! json_encode($planData['data'] ?? []) !!},
-                backgroundColor: [
-                    '#6c757d', // Free
-                    '#17a2b8', // Basic
-                    '#ffc107', // Premium
-                    '#343a40'  // Enterprise
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-});
+    // Dashboard specific scripts can be added here
+    console.log('Admin Dashboard loaded');
 </script>
 @endpush

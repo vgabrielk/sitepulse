@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Client extends Model
 {
@@ -41,6 +42,14 @@ class Client extends Model
     }
 
     /**
+     * Get the user associated with this client
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'email', 'email');
+    }
+
+    /**
      * Check if client is on trial
      */
     public function isOnTrial(): bool
@@ -61,7 +70,20 @@ class Client extends Model
      */
     public function getPlanLimits(): array
     {
-        return $this->plan_limits ?? $this->getDefaultPlanLimits();
+        // Start with stored limits or empty
+        $storedLimits = is_array($this->plan_limits) ? $this->plan_limits : [];
+
+        // Backward compatibility: map legacy monthly_visits -> monthly_sessions
+        if (isset($storedLimits['monthly_visits']) && !isset($storedLimits['monthly_sessions'])) {
+            $storedLimits['monthly_sessions'] = $storedLimits['monthly_visits'];
+            unset($storedLimits['monthly_visits']);
+        }
+
+        // Remove deprecated keys if present
+        unset($storedLimits['reviews']);
+
+        // Merge with defaults so all keys exist
+        return array_merge($this->getDefaultPlanLimits(), $storedLimits);
     }
 
     /**
@@ -71,38 +93,33 @@ class Client extends Model
     {
         return match ($this->plan) {
             'free' => [
-                'monthly_visits' => 1000,
+                'monthly_sessions' => 1000,
                 'monthly_events' => 5000,
                 'sites' => 1,
-                'reviews' => 50,
                 'exports' => 0,
             ],
             'basic' => [
-                'monthly_visits' => 10000,
+                'monthly_sessions' => 10000,
                 'monthly_events' => 50000,
                 'sites' => 3,
-                'reviews' => 500,
                 'exports' => 10,
             ],
             'premium' => [
-                'monthly_visits' => 100000,
+                'monthly_sessions' => 100000,
                 'monthly_events' => 500000,
                 'sites' => 10,
-                'reviews' => 5000,
                 'exports' => 100,
             ],
             'enterprise' => [
-                'monthly_visits' => -1, // unlimited
+                'monthly_sessions' => -1, // unlimited
                 'monthly_events' => -1,
                 'sites' => -1,
-                'reviews' => -1,
                 'exports' => -1,
             ],
             default => [
-                'monthly_visits' => 1000,
+                'monthly_sessions' => 1000,
                 'monthly_events' => 5000,
                 'sites' => 1,
-                'reviews' => 50,
                 'exports' => 0,
             ],
         };

@@ -40,6 +40,9 @@ class Event extends Model
      */
     public function session()
     {
+        if (!$this->visit) {
+            return null;
+        }
         return $this->visit->session();
     }
 
@@ -48,6 +51,9 @@ class Event extends Model
      */
     public function site()
     {
+        if (!$this->visit || !$this->visit->session) {
+            return null;
+        }
         return $this->visit->session->site();
     }
 

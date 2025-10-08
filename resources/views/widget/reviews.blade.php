@@ -681,6 +681,116 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        /* Review Message Styles */
+        .review-message {
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .review-message.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .review-message.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .message-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+        }
+
+        .message-icon-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .message-text {
+            flex: 1;
+        }
+
+        .message-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .message-description {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Field Error Styles */
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .field-error::before {
+            content: "⚠";
+            font-size: 10px;
+        }
+
+        .form-control.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+        }
+
+        .star-rating.error {
+            border: 1px solid #dc3545;
+            border-radius: 6px;
+            padding: 8px;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        /* Loading Button Styles */
+        .btn-loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -762,17 +872,34 @@
             </button>
             
             <div class="review-form" id="reviewForm">
-                <form method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}">
+                <!-- Success/Error Messages -->
+                <div id="reviewMessage" class="review-message" style="display: none;">
+                    <div class="message-content">
+                        <div class="message-icon">
+                            <svg class="message-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div class="message-text">
+                            <div class="message-title"></div>
+                            <div class="message-description"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('widget.submit-review.post', $site->widget_id) }}" id="reviewSubmitForm">
                     @csrf
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="visitor_name">Seu Nome *</label>
                             <input type="text" class="form-control" id="visitor_name" name="visitor_name" placeholder="Digite seu nome" required>
+                            <div class="field-error" id="visitor_name_error" style="display: none;"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="visitor_email">Email *</label>
                             <input type="email" class="form-control" id="visitor_email" name="visitor_email" placeholder="seu@email.com" required>
+                            <div class="field-error" id="visitor_email_error" style="display: none;"></div>
                         </div>
                     </div>
                     
@@ -784,15 +911,25 @@
                                 <label for="star{{ $i }}" class="star-label">★</label>
                             @endfor
                         </div>
+                        <div class="field-error" id="rating_error" style="display: none;"></div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="comment">Seu Comentário</label>
                         <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Compartilhe sua experiência..."></textarea>
+                        <div class="field-error" id="comment_error" style="display: none;"></div>
                     </div>
                     
                     <div class="btn-group">
-                        <button type="submit" class="submit-btn">Enviar Avaliação</button>
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span class="btn-text">Enviar Avaliação</span>
+                            <span class="btn-loading" style="display: none;">
+                                <svg class="loading-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Enviando...
+                            </span>
+                        </button>
                         <button type="button" class="cancel-btn" onclick="toggleReviewForm()">Cancelar</button>
                     </div>
                 </form>
@@ -873,6 +1010,143 @@
                     Fechar Formulário
                 `;
             }
+        }
+
+        // Review form submission with AJAX
+        document.getElementById('reviewSubmitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            const messageDiv = document.getElementById('reviewMessage');
+            
+            // Clear previous errors
+            clearErrors();
+            hideMessage();
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'flex';
+            
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Submit via AJAX
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || formData.get('_token')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccessMessage(data.message);
+                    form.reset();
+                    // Reset star rating
+                    document.querySelectorAll('.star-input').forEach(input => input.checked = false);
+                    document.querySelectorAll('.star-label').forEach(label => label.classList.remove('active'));
+                } else {
+                    showErrorMessage(data.message || 'Erro ao enviar avaliação');
+                    if (data.errors) {
+                        showFieldErrors(data.errors);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorMessage('Erro de conexão. Tente novamente.');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            });
+        });
+
+        function showSuccessMessage(message) {
+            const messageDiv = document.getElementById('reviewMessage');
+            const title = messageDiv.querySelector('.message-title');
+            const description = messageDiv.querySelector('.message-description');
+            const icon = messageDiv.querySelector('.message-icon-svg');
+            
+            messageDiv.className = 'review-message success';
+            title.textContent = 'Avaliação enviada com sucesso!';
+            description.textContent = message;
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>';
+            
+            messageDiv.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                hideMessage();
+            }, 5000);
+        }
+
+        function showErrorMessage(message) {
+            const messageDiv = document.getElementById('reviewMessage');
+            const title = messageDiv.querySelector('.message-title');
+            const description = messageDiv.querySelector('.message-description');
+            const icon = messageDiv.querySelector('.message-icon-svg');
+            
+            messageDiv.className = 'review-message error';
+            title.textContent = 'Erro ao enviar avaliação';
+            description.textContent = message;
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>';
+            
+            messageDiv.style.display = 'block';
+        }
+
+        function showFieldErrors(errors) {
+            Object.keys(errors).forEach(field => {
+                const errorElement = document.getElementById(field + '_error');
+                const inputElement = document.getElementById(field) || document.querySelector(`input[name="${field}"]`);
+                
+                if (errorElement) {
+                    errorElement.textContent = errors[field][0];
+                    errorElement.style.display = 'block';
+                }
+                
+                if (inputElement) {
+                    inputElement.classList.add('error');
+                }
+                
+                // Special handling for rating field
+                if (field === 'rating') {
+                    const starRating = document.querySelector('.star-rating');
+                    if (starRating) {
+                        starRating.classList.add('error');
+                    }
+                }
+            });
+        }
+
+        function clearErrors() {
+            // Clear field errors
+            document.querySelectorAll('.field-error').forEach(error => {
+                error.style.display = 'none';
+                error.textContent = '';
+            });
+            
+            // Remove error classes
+            document.querySelectorAll('.form-control.error').forEach(input => {
+                input.classList.remove('error');
+            });
+            
+            document.querySelectorAll('.star-rating.error').forEach(rating => {
+                rating.classList.remove('error');
+            });
+        }
+
+        function hideMessage() {
+            const messageDiv = document.getElementById('reviewMessage');
+            messageDiv.style.display = 'none';
         }
         
         // Star rating functionality

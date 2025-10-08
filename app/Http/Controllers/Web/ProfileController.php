@@ -34,6 +34,8 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'company' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
             'current_password' => 'nullable|string',
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
@@ -57,6 +59,8 @@ class ProfileController extends Controller
             // Update client information
             $client->name = $request->name;
             $client->email = $request->email;
+            $client->company = $request->company;
+            $client->phone = $request->phone;
             $client->save();
             
             return redirect()->route('profile')->with('success', 'Profile updated successfully!');

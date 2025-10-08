@@ -7,26 +7,26 @@
 <div class="space-y-8">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <x-ui.card>
-            <div class="text-xs font-semibold text-warning uppercase mb-1">Pending Reviews</div>
+            <div class="text-xs font-semibold text-warning uppercase mb-1">Reviews Pendentes</div>
             <div class="text-2xl font-bold">{{ $reviews->where('status', 'pending')->count() }}</div>
         </x-ui.card>
         <x-ui.card>
-            <div class="text-xs font-semibold text-success uppercase mb-1">Approved Reviews</div>
+            <div class="text-xs font-semibold text-success uppercase mb-1">Reviews Aprovadas</div>
             <div class="text-2xl font-bold">{{ $reviews->where('status', 'approved')->count() }}</div>
         </x-ui.card>
         <x-ui.card>
-            <div class="text-xs font-semibold text-primary uppercase mb-1">Average Rating</div>
+            <div class="text-xs font-semibold text-primary uppercase mb-1">Avaliação Média</div>
             <div class="text-2xl font-bold">{{ number_format($reviews->avg('rating') ?? 0, 1) }}</div>
         </x-ui.card>
         <x-ui.card>
-            <div class="text-xs font-semibold text-primary uppercase mb-1">Total Reviews</div>
+            <div class="text-xs font-semibold text-primary uppercase mb-1">Total de Reviews</div>
             <div class="text-2xl font-bold">{{ $reviews->count() }}</div>
         </x-ui.card>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <x-ui.card>
-            <h5 class="text-base font-semibold mb-4">Recent Reviews</h5>
+            <h5 class="text-base font-semibold mb-4">Reviews Recentes</h5>
             @if($reviews->count() > 0)
                 <div class="divide-y divide-border">
                     @foreach($reviews->take(5) as $review)
@@ -211,7 +211,7 @@
                                         <form method="POST" action="{{ route('reviews.destroy', $review['id']) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this review?')">
                                             @csrf
                                             @method('DELETE')
-                                            <x-ui.button type="submit" variant="destructive" size="sm">Delete</x-ui.button>
+                                            <x-ui.button type="submit" variant="destructive" size="sm">Excluir</x-ui.button>
                                         </form>
                                     </div>
                                 </td>

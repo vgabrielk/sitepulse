@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Site extends Model
 {
@@ -56,20 +57,18 @@ class Site extends Model
     /**
      * Get all visits for this site (through sessions)
      */
-    public function visits()
+    public function visits(): HasManyThrough
     {
-        return $this->hasManyThrough(Visit::class, Session::class, 'site_id', 'session_id', 'id', 'id');
+        return $this->hasManyThrough(Visit::class, Session::class);
     }
 
     /**
-     * Get all events for this site (through visits)
+     * Get all events for this site (through sessions)
      */
     public function events()
     {
-        return Event::whereHas('visit', function ($query) {
-            $query->whereHas('session', function ($subQuery) {
-                $subQuery->where('site_id', $this->id);
-            });
+        return Event::whereHas('visit.session', function ($query) {
+            $query->where('site_id', $this->id);
         });
     }
 

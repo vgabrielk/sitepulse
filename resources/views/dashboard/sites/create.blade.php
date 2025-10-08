@@ -1,87 +1,81 @@
-@extends('dashboard.layout')
+@extends('layouts.ui')
 
-@section('title', 'Add Site - SitePulse Widgets')
-@section('page-title', 'Add New Site')
+@section('title', 'Adicionar Site - SitePulse Widgets')
 
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Site Information</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ route('sites.store') }}">
-                    @csrf
-                    
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Site Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                               id="name" name="name" value="{{ old('name') }}" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="domain" class="form-label">Domain <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('domain') is-invalid @enderror" 
-                               id="domain" name="domain" value="{{ old('domain') }}" 
-                               placeholder="example.com" required>
-                        <div class="form-text">Enter your domain without http:// or https://</div>
-                        @error('domain')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="anonymize_ips" 
-                                           name="anonymize_ips" value="1" {{ old('anonymize_ips', true) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="anonymize_ips">
-                                        Anonymize IP Addresses
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="track_events" 
-                                           name="track_events" value="1" {{ old('track_events', true) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="track_events">
-                                        Track Events
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="collect_feedback" 
-                                   name="collect_feedback" value="1" {{ old('collect_feedback', true) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="collect_feedback">
-                                Collect User Feedback
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('sites.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-1"></i>
-                            Back to Sites
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-1"></i>
-                            Create Site
-                        </button>
-                    </div>
-                </form>
-            </div>
+@section('page-header')
+    <div class="flex items-center justify-between border-b border-border pb-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-semibold">Adicionar Novo Site</h1>
+            <p class="text-muted-foreground mt-1">Configure um novo site para começar a coletar dados e feedback</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <x-ui.button variant="outline" href="{{ route('sites.index') }}">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Voltar
+            </x-ui.button>
         </div>
     </div>
+@endsection
+
+@section('content')
+<div class="w-full">
+    <x-ui.card>
+        <div class="p-6">
+            <form method="POST" action="{{ route('sites.store') }}" class="space-y-6">
+                @csrf
+                
+                <!-- Site Name -->
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-foreground">
+                        Nome do Site <span class="text-destructive">*</span>
+                    </label>
+                    <input type="text" 
+                           id="name" 
+                           name="name" 
+                           value="{{ old('name') }}" 
+                           class="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring @error('name') border-destructive @enderror" 
+                           placeholder="Ex: Meu Site Principal"
+                           required>
+                    @error('name')
+                        <p class="text-sm text-destructive">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <!-- Domain -->
+                <div class="space-y-2">
+                    <label for="domain" class="block text-sm font-medium text-foreground">
+                        Domínio <span class="text-destructive">*</span>
+                    </label>
+                    <input type="text" 
+                           id="domain" 
+                           name="domain" 
+                           value="{{ old('domain') }}" 
+                           class="w-full px-3 py-2 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring @error('domain') border-destructive @enderror" 
+                           placeholder="exemplo.com"
+                           required>
+                    <p class="text-sm text-muted-foreground">Digite seu domínio sem http:// ou https://</p>
+                    @error('domain')
+                        <p class="text-sm text-destructive">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end gap-3 pt-6 border-t border-border">
+                    <x-ui.button variant="outline" href="{{ route('sites.index') }}">
+                        Cancelar
+                    </x-ui.button>
+                    <x-ui.button type="submit" variant="primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Criar Site
+                    </x-ui.button>
+                </div>
+            </form>
+        </div>
+    </x-ui.card>
 </div>
 @endsection

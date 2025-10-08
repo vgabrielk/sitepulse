@@ -37,8 +37,11 @@ class SiteController extends Controller
             return redirect()->route('login')->with('error', 'Client not found.');
         }
         
-        // Get sites as models instead of DTOs
-        $sites = $client->sites()->get();
+        // Get sites with only necessary fields and counts to avoid N+1 queries
+        $sites = $client->sites()
+            ->select(['id', 'name', 'domain', 'widget_id', 'is_active', 'created_at', 'updated_at'])
+            ->withCount(['sessions', 'visits', 'events'])
+            ->paginate(12);
         
         \Log::info('SiteController@index - Sites count: ' . $sites->count());
         
@@ -55,9 +58,6 @@ class SiteController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'domain' => 'required|string|max:255',
-            'anonymize_ips' => 'boolean',
-            'track_events' => 'boolean',
-            'collect_feedback' => 'boolean',
         ]);
 
         $user = Auth::user();
@@ -80,7 +80,7 @@ class SiteController extends Controller
         }
 
         try {
-            $siteData = $request->only(['name', 'domain', 'anonymize_ips', 'track_events', 'collect_feedback']);
+            $siteData = $request->only(['name', 'domain']);
             $site = $this->siteService->createSite($client, $siteData);
             
             return redirect()->route('sites.show', $site->id)

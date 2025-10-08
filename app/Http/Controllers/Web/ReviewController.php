@@ -24,19 +24,16 @@ class ReviewController extends Controller
             return redirect()->route('login')->with('error', 'Client not found.');
         }
 
-        $reviews = collect();
-        foreach ($client->sites as $site) {
-            $siteReviews = $this->reviewService->getReviewsBySite($site, 50);
-            $reviews = $reviews->merge(collect($siteReviews)->map(function($review) use ($site) {
-                $reviewData = $review->toArray();
-                $reviewData['site_name'] = $site->name;
-                return $reviewData;
-            }));
-        }
-
-        $reviews = $reviews->sortByDesc('created_at')->take(100);
-
-        return view('dashboard.reviews.index', compact('reviews'));
+        $sites = $client->sites()
+            ->select(['id', 'name', 'domain', 'is_active', 'created_at'])
+            ->withCount(['reviews', 'reviews as approved_reviews_count' => function($query) {
+                $query->where('status', 'approved');
+            }, 'reviews as pending_reviews_count' => function($query) {
+                $query->where('status', 'pending');
+            }])
+            ->paginate(12);
+        
+        return view('dashboard.reviews.index', compact('sites'));
     }
 
     public function site(Site $site)

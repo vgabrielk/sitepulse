@@ -5,7 +5,7 @@
 
 @section('page-actions')
     <div class="flex items-center gap-2">
-        <x-ui.button href="{{ route('sites.edit', $site) }}" variant="outline">Edit</x-ui.button>
+        <x-ui.button href="{{ route('sites.edit', $site) }}" variant="outline">Editar</x-ui.button>
     </div>
 @endsection
 

@@ -20,7 +20,8 @@ class ReviewService
         $data['site_id'] = $site->id;
         $data['session_id'] = $session?->id;
         $data['submitted_at'] = now();
-        $data['status'] = Review::STATUS_PENDING;
+        $data['status'] = Review::STATUS_APPROVED; // Auto-approve reviews
+        $data['approved_at'] = now(); // Set approval timestamp
         
         $review = $this->reviewRepository->create($data);
         

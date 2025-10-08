@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Client;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,30 +17,38 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $client = $request->user();
+        $user = $request->user();
         
-        if (!$client) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Authentication required',
-            ], 401);
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Authentication required');
         }
         
-        // Check if client is admin (you can implement your own admin logic)
-        if (!$this->isAdmin($client)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Admin access required',
-            ], 403);
+        // Check if user is admin
+        if (!$this->isAdmin($user)) {
+            return redirect()->route('dashboard')->with('error', 'Admin access required');
         }
         
         return $next($request);
     }
     
-    private function isAdmin(Client $client): bool
+    private function isAdmin(User $user): bool
     {
-        // Simple admin check - you can implement more sophisticated logic
-        return $client->email === config('app.admin_email') || 
-               $client->plan === 'enterprise';
+        // Check if user has admin permissions through roles
+        if ($user->hasPermission('admin.access')) {
+            return true;
+        }
+        
+        // Fallback: Check if user email is admin email (for backward compatibility)
+        if ($user->email === config('app.admin_email')) {
+            return true;
+        }
+        
+        // Fallback: Check if user's client has enterprise plan (for backward compatibility)
+        $client = $user->client;
+        if ($client && $client->plan === 'enterprise') {
+            return true;
+        }
+        
+        return false;
     }
 }

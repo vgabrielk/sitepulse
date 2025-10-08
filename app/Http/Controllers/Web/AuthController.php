@@ -114,14 +114,17 @@ class AuthController extends Controller
             Auth::guard('web')->login($user);
             \Log::info('User logged in after registration', ['user_id' => $user->id, 'authenticated' => Auth::guard('web')->check()]);
             
+            // Send email verification notification
+            $user->sendEmailVerificationNotification();
+            
         } catch (\Exception $e) {
             \DB::rollback();
             \Log::error('Error during registration', ['error' => $e->getMessage()]);
             throw $e;
         }
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Conta criada com sucesso! Bem-vindo ao SitePulse Widgets!');
+        return redirect()->route('verification.notice')
+            ->with('success', 'Conta criada com sucesso! Verifique seu email para continuar.');
     }
 
     /**
@@ -152,12 +155,25 @@ class AuthController extends Controller
     public function passwordReset(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:clients,email',
+            'email' => 'required|email|exists:users,email',
         ]);
 
-        // TODO: Implement password reset logic
-        // For now, just show success message
-        return back()->with('success', 'Instruções de recuperação de senha enviadas para seu email.');
+        try {
+            // Find user by email
+            $user = \App\Models\User::where('email', $request->email)->first();
+            
+            if (!$user) {
+                return back()->withErrors(['email' => 'Email não encontrado.']);
+            }
+
+            // Send password reset notification
+            $user->sendPasswordResetNotification(\Illuminate\Support\Facades\Password::getRepository()->create($user));
+
+            return back()->with('success', 'Instruções de recuperação de senha enviadas para seu email.');
+        } catch (\Exception $e) {
+            \Log::error('Password reset error', ['error' => $e->getMessage()]);
+            return back()->withErrors(['email' => 'Erro ao enviar email. Tente novamente.']);
+        }
     }
 
     /**
@@ -175,12 +191,55 @@ class AuthController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email|exists:clients,email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // TODO: Implement password reset logic
-        return redirect()->route('login')
-            ->with('success', 'Senha redefinida com sucesso!');
+        try {
+            // Find user by email
+            $user = \App\Models\User::where('email', $request->email)->first();
+            
+            if (!$user) {
+                return back()->withErrors(['email' => 'Email não encontrado.']);
+            }
+
+            // Verify token
+            $passwordReset = \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+                ->where('email', $request->email)
+                ->first();
+
+            if (!$passwordReset) {
+                return back()->withErrors(['token' => 'Token inválido ou expirado.']);
+            }
+
+            // Check if token matches (the stored token is already hashed)
+            if (!\Illuminate\Support\Facades\Hash::check($request->token, $passwordReset->token)) {
+                return back()->withErrors(['token' => 'Token inválido ou expirado.']);
+            }
+
+            // Check if token is not expired (60 minutes)
+            if (now()->diffInMinutes($passwordReset->created_at) > 60) {
+                // Delete expired token
+                \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+                    ->where('email', $request->email)
+                    ->delete();
+                return back()->withErrors(['token' => 'Token expirado. Solicite um novo link.']);
+            }
+
+            // Update password
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+            $user->save();
+
+            // Delete password reset token
+            \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+                ->where('email', $request->email)
+                ->delete();
+
+            return redirect()->route('login')
+                ->with('success', 'Senha redefinida com sucesso! Faça login com sua nova senha.');
+        } catch (\Exception $e) {
+            \Log::error('Password reset update error', ['error' => $e->getMessage()]);
+            return back()->withErrors(['password' => 'Erro ao redefinir senha. Tente novamente.']);
+        }
     }
 }

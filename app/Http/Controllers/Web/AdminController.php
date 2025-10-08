@@ -40,20 +40,30 @@ class AdminController extends Controller
         
         // Get top sites by traffic
         $topSites = Site::with('client')
-            ->withCount(['sessions', 'visits', 'events'])
-            ->orderBy('sessions_count', 'desc')
+            ->withCount(['sessions'])
             ->limit(10)
             ->get()
-            ->map(fn($site) => [
-                'id' => $site->id,
-                'name' => $site->name,
-                'domain' => $site->domain,
-                'client_name' => $site->client->name,
-                'sessions_count' => $site->sessions_count,
-                'visits_count' => $site->visits_count,
-                'events_count' => $site->events_count,
-                'is_active' => $site->is_active,
-            ])
+            ->map(function($site) {
+                // Get events count manually since it's a complex relationship
+                $eventsCount = DB::table('events')
+                    ->join('visits', 'events.visit_id', '=', 'visits.id')
+                    ->join('analytics_sessions', 'visits.session_id', '=', 'analytics_sessions.id')
+                    ->where('analytics_sessions.site_id', $site->id)
+                    ->count();
+                
+                return [
+                    'id' => $site->id,
+                    'name' => $site->name,
+                    'domain' => $site->domain,
+                    'client_name' => $site->client->name,
+                    'sessions_count' => $site->sessions_count,
+                    'events_count' => $eventsCount,
+                    'is_active' => $site->is_active,
+                ];
+            })
+            ->sortByDesc('sessions_count')
+            ->take(10)
+            ->values()
             ->toArray();
         
         // Get system status
@@ -76,14 +86,26 @@ class AdminController extends Controller
     private function getSystemStats(): array
     {
         return Cache::remember('admin_system_stats', 300, function () {
-            return [
-                'total_clients' => Client::count(),
-                'total_sites' => Site::count(),
-                'total_sessions' => DB::table('sessions')->count(),
-                'total_visits' => DB::table('visits')->count(),
-                'total_events' => DB::table('events')->count(),
-                'total_reviews' => DB::table('reviews')->count(),
-            ];
+            try {
+                return [
+                    'total_clients' => Client::count(),
+                    'total_sites' => Site::count(),
+                    'total_sessions' => DB::table('analytics_sessions')->count(),
+                    'total_visits' => DB::table('visits')->count(),
+                    'total_events' => DB::table('events')->count(),
+                    'total_reviews' => DB::table('reviews')->count(),
+                ];
+            } catch (\Exception $e) {
+                // Fallback if tables don't exist
+                return [
+                    'total_clients' => Client::count(),
+                    'total_sites' => Site::count(),
+                    'total_sessions' => 0,
+                    'total_visits' => 0,
+                    'total_events' => 0,
+                    'total_reviews' => 0,
+                ];
+            }
         });
     }
     
@@ -169,7 +191,7 @@ class AdminController extends Controller
             $date = now()->subDays($i);
             $labels[] = $date->format('M j');
             
-            $sessionsCount = DB::table('sessions')
+            $sessionsCount = DB::table('analytics_sessions')
                 ->whereDate('started_at', $date->format('Y-m-d'))
                 ->count();
             
